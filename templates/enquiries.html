@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% set active = "enquiries" %}
+{% block title %}Enquiries{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Customer Enquiries</h1>
+    <p>Support requests from Telegram users</p>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enq in enquiries %}
+            <tr>
+                <td>{{ enq['id'] }}</td>
+                <td>{{ enq['full_name'] or 'Unknown' }}</td>
+                <td>{{ enq['phone'] or '-' }}</td>
+                <td style="max-width: 300px;">{{ enq['message'] }}</td>
+                <td><span class="badge badge-{{ enq['status'] }}">{{ enq['status']|capitalize }}</span></td>
+                <td>{{ enq['created_at'] }}</td>
+                <td>
+                    {% if enq['status'] == 'open' %}
+                    <form method="POST" action="/enquiries/{{ enq['id'] }}/close" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-primary">Close</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if not enquiries %}
+    <p style="color: var(--text-secondary); text-align: center; padding: 32px;">No enquiries yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

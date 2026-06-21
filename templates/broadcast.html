@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% set active = "broadcast" %}
+{% block title %}Broadcast{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Broadcast Messages</h1>
+    <p>Send announcements and promotions to all users</p>
+</div>
+
+<div class="card">
+    <h3>Send New Broadcast</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 16px;">This will send a message to all {{ user_count }} registered users via Telegram.</p>
+    <form method="POST" action="/broadcast/send">
+        <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" rows="5" required placeholder="Type your announcement, promotion, or update here..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="return confirm('Send this message to all {{ user_count }} users?')">Send Broadcast</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Recent Broadcasts</h3>
+    {% if broadcasts %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Message</th>
+                <th>Sent To</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bc in broadcasts %}
+            <tr>
+                <td>{{ bc['id'] }}</td>
+                <td style="max-width: 400px;">{{ bc['message'] }}</td>
+                <td>{{ bc['sent_to'] }} users</td>
+                <td>{{ bc['created_at'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--text-secondary); text-align: center; padding: 32px;">No broadcasts sent yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

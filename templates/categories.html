@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% set active = "categories" %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Categories</h1>
+    <p>Manage product categories</p>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>All Categories</h3>
+        <button class="btn btn-primary" onclick="document.getElementById('addCatModal').classList.add('active')">+ Add Category</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+            <tr>
+                <td>{{ cat['id'] }}</td>
+                <td>{{ cat['name'] }}</td>
+                <td>{{ cat['description'] or '-' }}</td>
+                <td>
+                    <form method="POST" action="/categories/{{ cat['id'] }}/delete" style="display:inline;" onsubmit="return confirm('Delete this category?')">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-overlay" id="addCatModal">
+    <div class="modal">
+        <h3>Add New Category</h3>
+        <form method="POST" action="/categories/add">
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn btn-primary">Add Category</button>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('addCatModal').classList.remove('active')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

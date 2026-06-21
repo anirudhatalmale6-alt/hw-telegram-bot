@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% set active = "dashboard" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Overview of your store performance</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="label">Total Orders</div>
+        <div class="value blue">{{ stats.total_orders }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Pending Orders</div>
+        <div class="value orange">{{ stats.pending_orders }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Total Revenue</div>
+        <div class="value green">SGD {{ "%.2f"|format(stats.total_revenue) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Customers</div>
+        <div class="value blue">{{ stats.total_customers }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Products</div>
+        <div class="value">{{ stats.total_products }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Open Enquiries</div>
+        <div class="value orange">{{ stats.open_enquiries }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Recent Orders</h3>
+    {% if recent_orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td>#{{ order[0] }}</td>
+                <td>{{ order[1] or 'Unknown' }}</td>
+                <td>SGD {{ "%.2f"|format(order[2]) }}</td>
+                <td><span class="badge badge-{{ order[3] }}">{{ order[3]|capitalize }}</span></td>
+                <td><span class="badge badge-{{ order[4] }}">{{ order[4]|capitalize }}</span></td>
+                <td>{{ order[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--text-secondary); text-align: center; padding: 32px;">No orders yet. Orders from your Telegram bot will appear here.</p>
+    {% endif %}
+</div>
+{% endblock %}

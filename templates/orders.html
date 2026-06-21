@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% set active = "orders" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Orders</h1>
+    <p>Manage customer orders</p>
+</div>
+
+<div class="card">
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Delivery</th>
+                <th>Total</th>
+                <th>Order Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>#{{ order['id'] }}</td>
+                <td>{{ order['customer_name'] or order['full_name'] or 'Unknown' }}</td>
+                <td>{{ order['customer_phone'] or order['phone'] or '-' }}</td>
+                <td>{{ order['delivery_method'] or '-' }}</td>
+                <td>SGD {{ "%.2f"|format(order['total']) }}</td>
+                <td>
+                    <form method="POST" action="/orders/{{ order['id'] }}/status" style="display:inline;">
+                        <select name="status" class="status-select" onchange="this.form.submit()">
+                            {% for s in ['pending', 'processing', 'shipped', 'completed', 'cancelled'] %}
+                            <option value="{{ s }}" {% if order['order_status'] == s %}selected{% endif %}>{{ s|capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/orders/{{ order['id'] }}/payment" style="display:inline;">
+                        <select name="status" class="status-select" onchange="this.form.submit()">
+                            {% for s in ['pending', 'completed', 'failed', 'refunded'] %}
+                            <option value="{{ s }}" {% if order['payment_status'] == s %}selected{% endif %}>{{ s|capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+                <td>{{ order['created_at'] }}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline" onclick="showOrderDetail({{ order['id'] }}, '{{ order['items_json']|e }}', '{{ order['address']|e }}')">View</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--text-secondary); text-align: center; padding: 32px;">No orders yet.</p>
+    {% endif %}
+</div>
+
+<div class="modal-overlay" id="orderModal">
+    <div class="modal">
+        <h3>Order Details</h3>
+        <div id="orderDetailContent"></div>
+        <br>
+        <button class="btn btn-outline" onclick="document.getElementById('orderModal').classList.remove('active')">Close</button>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+function showOrderDetail(id, itemsJson, address) {
+    try {
+        const items = JSON.parse(itemsJson);
+        let html = '<p><strong>Delivery Address:</strong> ' + (address || 'Self Collection') + '</p><br>';
+        html += '<table><thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead><tbody>';
+        let total = 0;
+        items.forEach(item => {
+            const subtotal = item.price * item.qty;
+            total += subtotal;
+            html += '<tr><td>' + item.name + (item.pkg ? ' (' + item.pkg + ')' : '') + '</td><td>' + item.qty + '</td><td>SGD ' + item.price.toFixed(2) + '</td><td>SGD ' + subtotal.toFixed(2) + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        document.getElementById('orderDetailContent').innerHTML = html;
+    } catch(e) {
+        document.getElementById('orderDetailContent').innerHTML = '<p>Could not parse order items.</p>';
+    }
+    document.getElementById('orderModal').classList.add('active');
+}
+</script>
+{% endblock %}

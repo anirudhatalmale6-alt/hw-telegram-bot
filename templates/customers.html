@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% set active = "customers" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Customers</h1>
+    <p>Registered Telegram users</p>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Phone</th>
+                <th>Country</th>
+                <th>Registered</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user['id'] }}</td>
+                <td>{{ user['full_name'] or '-' }}</td>
+                <td>{{ ('@' + user['username']) if user['username'] else '-' }}</td>
+                <td>{{ user['phone'] or '-' }}</td>
+                <td>{{ user['country'] or '-' }}</td>
+                <td>{{ user['created_at'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if not users %}
+    <p style="color: var(--text-secondary); text-align: center; padding: 32px;">No customers registered yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

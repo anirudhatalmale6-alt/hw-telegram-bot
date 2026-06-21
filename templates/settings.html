@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% set active = "settings" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Settings</h1>
+    <p>Configure store settings</p>
+</div>
+
+<div class="card">
+    <h3>Delivery Options</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Label</th>
+                <th>Fee (SGD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, opt in delivery_options.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ opt.label }}</td>
+                <td>SGD {{ "%.2f"|format(opt.fee) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p style="color: var(--text-secondary); margin-top: 12px; font-size: 13px;">
+        Delivery fees can be configured in the config.py file.
+    </p>
+</div>
+
+<div class="card">
+    <h3>Bot Configuration</h3>
+    <table>
+        <tbody>
+            <tr><td style="font-weight:500; width:200px;">Bot Token</td><td>Set via BOT_TOKEN environment variable</td></tr>
+            <tr><td style="font-weight:500;">Admin Chat ID</td><td>Set via ADMIN_CHAT_ID environment variable</td></tr>
+            <tr><td style="font-weight:500;">PayNow UEN</td><td>Set via PAYNOW_UEN environment variable</td></tr>
+            <tr><td style="font-weight:500;">Stripe Keys</td><td>Set via STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY environment variables</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Admin Credentials</h3>
+    <p style="color: var(--text-secondary); font-size: 13px;">
+        Default login: admin / admin123<br>
+        Change credentials via ADMIN_USERNAME and ADMIN_PASSWORD environment variables.
+    </p>
+</div>
+{% endblock %}
