@@ -191,21 +191,32 @@ async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
 
     # columns: 0=id, 1=category_id, 2=name, 3=description, 4=benefits, 5=usage_info, 6=price, 7=image_url, 8=in_stock, 9=created_at, 10=cat_name
-    text = (
-        f"{product[2]}\n"
-        "━━━━━━━━━━━━━━━━━━\n\n"
-        f"Category: {product[10]}\n"
-        f"Price: SGD {product[6]:.2f}\n\n"
-        f"Description:\n{product[3]}\n\n"
-        f"Benefits:\n{product[4]}\n\n"
-        f"How to Use:\n{product[5]}\n"
-    )
+    text = f"{product[2]}\n━━━━━━━━━━━━━━━━━━\n\n"
+
+    if product[4]:
+        text += "Benefits\n"
+        for line in product[4].split("\n"):
+            line = line.strip()
+            if line:
+                label = line.split(":", 1)[0].strip() if ":" in line else line
+                text += f"  - {label}\n"
+        text += "\n"
+
+    if product[5]:
+        text += "Usage\n"
+        first_sentence = product[5].split(".")[0].strip()
+        if first_sentence:
+            text += f"  - {first_sentence}\n\n"
+
+    if packages:
+        text += "Packages\n"
+        for pkg in packages:
+            text += f"  - {pkg[1]} - SGD {pkg[2]:.2f}\n"
+        text += "\n"
 
     keyboard = []
     if packages:
-        text += "\nPackage Options:\n"
         for pkg in packages:
-            text += f"  - {pkg[1]}: SGD {pkg[2]:.2f}\n"
             keyboard.append([InlineKeyboardButton(
                 f"Add: {pkg[1]} - SGD {pkg[2]:.2f}",
                 callback_data=f"addpkg_{prod_id}_{pkg[0]}"
@@ -216,8 +227,48 @@ async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE
             callback_data=f"add_{prod_id}"
         )])
 
+    keyboard.append([InlineKeyboardButton("View Full Information", callback_data=f"fullinfo_{prod_id}")])
     keyboard.append([InlineKeyboardButton("Back", callback_data=f"cat_{product[1]}")])
     keyboard.append([InlineKeyboardButton("Main Menu", callback_data="main_menu")])
+
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
+
+
+async def show_product_full_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    prod_id = int(query.data.split("_")[1])
+
+    db = await get_db()
+    cursor = await db.execute(
+        "SELECT p.*, c.name as cat_name FROM products p "
+        "JOIN categories c ON p.category_id = c.id WHERE p.id = ?",
+        (prod_id,)
+    )
+    product = await cursor.fetchone()
+    await db.close()
+
+    if not product:
+        return
+
+    text = (
+        f"{product[2]}\n"
+        "━━━━━━━━━━━━━━━━━━\n\n"
+        f"Category: {product[10]}\n"
+        f"Price: SGD {product[6]:.2f}\n\n"
+    )
+
+    if product[3]:
+        text += f"Description\n{product[3]}\n\n"
+    if product[4]:
+        text += f"Benefits\n{product[4]}\n\n"
+    if product[5]:
+        text += f"Usage\n{product[5]}\n"
+
+    keyboard = [
+        [InlineKeyboardButton("Back to Product", callback_data=f"prod_{prod_id}")],
+        [InlineKeyboardButton("Main Menu", callback_data="main_menu")],
+    ]
 
     await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -818,6 +869,7 @@ def build_app():
     app.add_handler(CallbackQueryHandler(browse_categories, pattern="^browse$"))
     app.add_handler(CallbackQueryHandler(show_category_products, pattern=r"^cat_\d+$"))
     app.add_handler(CallbackQueryHandler(show_product_detail, pattern=r"^prod_\d+$"))
+    app.add_handler(CallbackQueryHandler(show_product_full_info, pattern=r"^fullinfo_\d+$"))
     app.add_handler(CallbackQueryHandler(add_to_cart, pattern=r"^add_\d+$"))
     app.add_handler(CallbackQueryHandler(add_to_cart, pattern=r"^addpkg_\d+_\d+$"))
     app.add_handler(CallbackQueryHandler(show_cart, pattern="^cart$"))
