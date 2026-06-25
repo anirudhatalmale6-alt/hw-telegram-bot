@@ -190,7 +190,7 @@ async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE
     if not product:
         return
 
-    # columns: 0=id, 1=category_id, 2=name, 3=description, 4=benefits, 5=usage_info, 6=price, 7=image_url, 8=in_stock, 9=created_at, 10=cat_name
+    # columns: 0=id, 1=category_id, 2=name, 3=description, 4=benefits, 5=usage_info, 6=full_info, 7=price, 8=image_url, 9=in_stock, 10=created_at, 11=cat_name
     text = f"{product[2]}\n━━━━━━━━━━━━━━━━━━\n\n"
 
     if product[4]:
@@ -223,7 +223,7 @@ async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE
             )])
     else:
         keyboard.append([InlineKeyboardButton(
-            f"Add to Cart - SGD {product[6]:.2f}",
+            f"Add to Cart - SGD {product[7]:.2f}",
             callback_data=f"add_{prod_id}"
         )])
 
@@ -251,26 +251,36 @@ async def show_product_full_info(update: Update, context: ContextTypes.DEFAULT_T
     if not product:
         return
 
-    text = (
-        f"{product[2]}\n"
-        "━━━━━━━━━━━━━━━━━━\n\n"
-        f"Category: {product[10]}\n"
-        f"Price: SGD {product[6]:.2f}\n\n"
-    )
+    # columns: 0=id, 1=category_id, 2=name, 3=description, 4=benefits, 5=usage_info, 6=full_info, 7=price, 8=image_url, 9=in_stock, 10=created_at, 11=cat_name
+    header = f"{product[2]}\n━━━━━━━━━━━━━━━━━━\n\n"
 
-    if product[3]:
-        text += f"Description\n{product[3]}\n\n"
-    if product[4]:
-        text += f"Benefits\n{product[4]}\n\n"
-    if product[5]:
-        text += f"Usage\n{product[5]}\n"
+    if product[6]:
+        full_text = header + product[6]
+    else:
+        full_text = header
+        if product[3]:
+            full_text += f"Description\n{product[3]}\n\n"
+        if product[4]:
+            full_text += f"Benefits\n{product[4]}\n\n"
+        if product[5]:
+            full_text += f"Usage\n{product[5]}\n"
 
     keyboard = [
         [InlineKeyboardButton("Back to Product", callback_data=f"prod_{prod_id}")],
         [InlineKeyboardButton("Main Menu", callback_data="main_menu")],
     ]
+    markup = InlineKeyboardMarkup(keyboard)
 
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
+    if len(full_text) <= 4096:
+        await query.edit_message_text(full_text, reply_markup=markup)
+    else:
+        await query.edit_message_text(full_text[:4096], reply_markup=None)
+        remaining = full_text[4096:]
+        chat_id = query.from_user.id
+        while len(remaining) > 4096:
+            await context.bot.send_message(chat_id=chat_id, text=remaining[:4096])
+            remaining = remaining[4096:]
+        await context.bot.send_message(chat_id=chat_id, text=remaining, reply_markup=markup)
 
 
 async def add_to_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
