@@ -1240,6 +1240,127 @@ async def seed_demo_data():
             (9, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Peptide Pens Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Peptide Pens", "Pre-filled peptide pen devices for convenient subcutaneous administration", 10)
+    )
+
+    pen_products = [
+        {
+            "name": "Retatrutide Pen 30mg",
+            "benefits": "Premium fat-loss pen for appetite control.\nAdvanced weight management support.\nMetabolic efficiency positioning.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 455.00,
+            "desc": "Premium fat-loss pen positioned for appetite control and advanced weight management.",
+            "key_benefits": "Premium fat-loss pen for appetite control.\nAdvanced weight management support.\nMetabolic efficiency positioning.",
+        },
+        {
+            "name": "Tirzepatide Pen 30mg",
+            "benefits": "High-demand weight management pen.\nAppetite control and metabolic support.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 335.00,
+            "desc": "High-demand weight management pen for appetite control and metabolic support.",
+            "key_benefits": "High-demand weight management pen.\nAppetite control and metabolic support.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "BPC-157 10mg + TB-500 10mg Pen",
+            "benefits": "Recovery support and tissue repair.\nJoint and soft-tissue support.\nDual-peptide combination pen.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 260.00,
+            "desc": "Recovery support, tissue repair, joint and soft-tissue support.",
+            "key_benefits": "Recovery support and tissue repair.\nJoint and soft-tissue support.\nDual-peptide combination pen.",
+        },
+        {
+            "name": "NAD Pen 1000mg",
+            "benefits": "Premium longevity pen for energy.\nCellular support and healthspan positioning.\nConvenient NAD delivery format.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 365.00,
+            "desc": "Premium longevity pen for energy, cellular support, and healthspan positioning.",
+            "key_benefits": "Premium longevity pen for energy.\nCellular support and healthspan positioning.\nConvenient NAD delivery format.",
+        },
+        {
+            "name": "BPC-157 Pen 10mg",
+            "benefits": "Supports recovery and gut support.\nTissue healing and repair protocols.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 185.00,
+            "desc": "Supports recovery, gut support, tissue healing, and repair protocols.",
+            "key_benefits": "Supports recovery and gut support.\nTissue healing and repair protocols.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "TB-500 Pen 10mg",
+            "benefits": "Recovery-focused peptide for mobility.\nTissue support and repair cycles.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 210.00,
+            "desc": "Recovery-focused peptide for mobility, tissue support, and repair cycles.",
+            "key_benefits": "Recovery-focused peptide for mobility.\nTissue support and repair cycles.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "Epithalon Pen 50mg",
+            "benefits": "Longevity-focused peptide for healthy aging.\nCellular support positioning.\nPremium pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 350.00,
+            "desc": "Longevity-focused peptide commonly positioned for healthy aging and cellular support.",
+            "key_benefits": "Longevity-focused peptide for healthy aging.\nCellular support positioning.\nPremium pre-filled pen delivery.",
+        },
+        {
+            "name": "MOTS-C Pen 40mg",
+            "benefits": "Mitochondrial and metabolic support.\nLongevity and energy protocols.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 240.00,
+            "desc": "Mitochondrial and metabolic support peptide positioned for longevity and energy protocols.",
+            "key_benefits": "Mitochondrial and metabolic support.\nLongevity and energy protocols.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "GLOW Blend Pen 70mg",
+            "benefits": "Skin, glow, and aesthetic support blend.\nBeauty and recovery-focused positioning.\nPremium pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 255.00,
+            "desc": "Skin, glow, and aesthetic support blend for beauty and recovery-focused customers.",
+            "key_benefits": "Skin, glow, and aesthetic support blend.\nBeauty and recovery-focused positioning.\nPremium pre-filled pen delivery.",
+        },
+        {
+            "name": "KLOW Blend Pen",
+            "benefits": "Premium regenerative beauty blend.\nSkin, healing, and recovery support.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 285.00,
+            "desc": "Premium regenerative beauty blend combining skin, healing, and recovery support.",
+            "key_benefits": "Premium regenerative beauty blend.\nSkin, healing, and recovery support.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "GHK-Cu Pen 100mg",
+            "benefits": "Premium copper peptide for skin quality.\nHair support and regenerative positioning.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 265.00,
+            "desc": "Premium copper peptide pen for skin quality, hair support, and regenerative positioning.",
+            "key_benefits": "Premium copper peptide for skin quality.\nHair support and regenerative positioning.\nConvenient pre-filled pen delivery.",
+        },
+        {
+            "name": "Follistatin Pen 1mg",
+            "benefits": "Advanced performance peptide positioning.\nHigh-end body recomposition protocols.\nPremium pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 495.00,
+            "desc": "Advanced performance peptide positioned for high-end body recomposition protocols.",
+            "key_benefits": "Advanced performance peptide positioning.\nHigh-end body recomposition protocols.\nPremium pre-filled pen delivery.",
+        },
+        {
+            "name": "HGH (191aa) Pen 36IU",
+            "benefits": "Premium growth hormone for recovery.\nBody composition and performance support.\nConvenient pre-filled pen delivery.",
+            "usage": "Subcutaneous injection via pre-filled pen device.",
+            "price": 420.00,
+            "desc": "Premium growth hormone option for recovery, body composition, and performance support.",
+            "key_benefits": "Premium growth hormone for recovery.\nBody composition and performance support.\nConvenient pre-filled pen delivery.",
+        },
+    ]
+
+    for p in pen_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['key_benefits']}\n\nUsage\n{p['usage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (10, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -1319,6 +1440,20 @@ async def seed_demo_data():
         (68, [("1 Vial", 120.00), ("5 Vials", 560.00), ("10 Vials", 1040.00)]),
         (69, [("1 Vial", 130.00), ("5 Vials", 610.00), ("10 Vials", 1140.00)]),
         (70, [("1 Vial", 230.00), ("5 Vials", 1070.00), ("10 Vials", 2050.00)]),
+        # Peptide Pens packages (products 71-83)
+        (71, [("1 Pen", 455.00), ("5 Pens", 2093.00), ("10 Pens", 4004.00)]),
+        (72, [("1 Pen", 335.00), ("5 Pens", 1541.00), ("10 Pens", 2948.00)]),
+        (73, [("1 Pen", 260.00), ("5 Pens", 1196.00), ("10 Pens", 2288.00)]),
+        (74, [("1 Pen", 365.00), ("5 Pens", 1679.00), ("10 Pens", 3212.00)]),
+        (75, [("1 Pen", 185.00), ("5 Pens", 851.00), ("10 Pens", 1628.00)]),
+        (76, [("1 Pen", 210.00), ("5 Pens", 966.00), ("10 Pens", 1848.00)]),
+        (77, [("1 Pen", 350.00), ("5 Pens", 1610.00), ("10 Pens", 3080.00)]),
+        (78, [("1 Pen", 240.00), ("5 Pens", 1104.00), ("10 Pens", 2112.00)]),
+        (79, [("1 Pen", 255.00), ("5 Pens", 1173.00), ("10 Pens", 2244.00)]),
+        (80, [("1 Pen", 285.00), ("5 Pens", 1311.00), ("10 Pens", 2508.00)]),
+        (81, [("1 Pen", 265.00), ("5 Pens", 1219.00), ("10 Pens", 2332.00)]),
+        (82, [("1 Pen", 495.00), ("5 Pens", 2277.00), ("10 Pens", 4356.00)]),
+        (83, [("1 Pen", 420.00), ("5 Pens", 1932.00), ("10 Pens", 3696.00)]),
     ]
 
     for prod_id, options in package_data:
