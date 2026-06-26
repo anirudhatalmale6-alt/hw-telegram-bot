@@ -1361,6 +1361,40 @@ async def seed_demo_data():
             (10, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Support Products Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Support Products", "Essential support items for peptide and injectable protocols", 11)
+    )
+
+    support_product = {
+        "name": "Bacteriostatic Water 3ml",
+        "benefits": "Sterile multi-dose diluent designed for reconstituting or diluting compatible injectable compounds.\nContains 0.9% benzyl alcohol to help inhibit bacterial growth after opening, allowing repeated withdrawals when handled aseptically.\nEssential support product for clinics and structured peptide protocols requiring accurate reconstitution.",
+        "usage": "Used as a diluent only. Draw the required volume using sterile technique and add to the compound requiring reconstitution according to its product instructions.",
+        "price": 9.00,
+        "desc": "Bacteriostatic Water is a sterile, non-pyrogenic water-based diluent that contains 0.9% benzyl alcohol as a preservative. Its role is to dissolve or dilute compatible injectable products before administration; it has no therapeutic effect on its own.\n\nBecause the benzyl alcohol helps suppress bacterial growth, bacteriostatic water is commonly supplied as a multi-dose vial and may be used for repeated withdrawals when proper aseptic technique is followed. This makes it a practical support item for peptide and injectable protocols that require accurate, consistent reconstitution.",
+        "full_benefits": "Sterile diluent support: Used to reconstitute or dilute compatible injectable compounds.\nMulti-dose convenience: Preservative content supports multiple withdrawals under sterile handling.\nProtocol essential: Useful in clinics and structured programmes where vial-based compounds need mixing before use.",
+        "dosage": "Use only as a diluent for products whose instructions permit bacteriostatic water.\nWithdraw with a sterile syringe and needle using aseptic technique.\nFollow the reconstitution instructions for the specific product being mixed.",
+        "how_to_use": "Clean the vial stopper before each puncture.\nDraw the required amount with a sterile syringe.\nInject into the lyophilised or concentrated product slowly as directed by that product's instructions.\nSwirl gently if needed; do not shake unless the product specifically allows it.",
+        "faqs": "What is bacteriostatic water used for?\nIt is used to dilute or dissolve compatible injectable products before administration.\n\nCan it be used more than once?\nYes. Because it contains 0.9% benzyl alcohol, it is intended for multiple withdrawals when aseptic handling is maintained.\n\nDoes it have any therapeutic effect?\nNo. It is a support product and diluent only; it does not treat any condition by itself.\n\nHow long can it be used after opening?\nCommon product guidance for multi-dose bacteriostatic water often references use for up to 28 days after first puncture when handled properly, unless the manufacturer or protocol states otherwise.\n\nHow should it be stored?\nStore according to label instructions, commonly in a cool, dry place away from light before use. After first puncture, continue using sterile technique and follow product or clinic SOP guidance.",
+        "storage": "Store in a cool, dry place away from direct sunlight.\nKeep the stopper clean and use sterile technique after opening."
+    }
+
+    p = support_product
+    full_info = (
+        f"Description\n{p['desc']}\n\n"
+        f"Key Benefits\n{p['full_benefits']}\n\n"
+        f"Recommended Usage\n{p['dosage']}\n\n"
+        f"How To Use\n{p['how_to_use']}\n\n"
+        f"Customer FAQs\n{p['faqs']}\n\n"
+        f"Storage\n{p['storage']}"
+    )
+    await db.execute(
+        "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (11, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+    )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -1454,6 +1488,8 @@ async def seed_demo_data():
         (81, [("1 Pen", 265.00), ("5 Pens", 1219.00), ("10 Pens", 2332.00)]),
         (82, [("1 Pen", 495.00), ("5 Pens", 2277.00), ("10 Pens", 4356.00)]),
         (83, [("1 Pen", 420.00), ("5 Pens", 1932.00), ("10 Pens", 3696.00)]),
+        # Support Products packages (product 84)
+        (84, [("1 Vial", 9.00), ("5 Vials", 40.00), ("10 Vials", 70.00)]),
     ]
 
     for prod_id, options in package_data:
