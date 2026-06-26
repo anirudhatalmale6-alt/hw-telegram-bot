@@ -669,6 +669,98 @@ async def seed_demo_data():
             (3, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Longevity & Healthspan Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Longevity & Healthspan", "Peptides and compounds for cellular energy, healthy ageing, regeneration, and long-term vitality", 4)
+    )
+
+    longevity_products = [
+        {
+            "name": "NAD+ 1000mg",
+            "benefits": "Foundational cellular-energy coenzyme for vitality, recovery, and healthy-ageing support.\nMay assist with energy production, mental clarity, and resilience over time.\nComplements longevity programmes by supporting the body at a cellular level.",
+            "usage": "IV, intramuscular, or subcutaneous use depending on protocol and clinical guidance.",
+            "price": 280.00,
+            "desc": "NAD+ is an essential cellular coenzyme involved in energy production, mitochondrial function, and many processes associated with repair, resilience, and healthy ageing. It is commonly used in advanced longevity programmes for clients seeking support in energy, mental clarity, recovery, and overall cellular vitality.\n\nWithin a VANTIS protocol, NAD+ is positioned as a foundational longevity support. It is especially useful for clients who want to build a more resilient internal platform for long-term wellness, performance, and age-supportive recovery.",
+            "full_benefits": "Cellular energy support: Commonly used to support energy production and deeper internal resilience.\nHealthy-ageing support: Often selected in programmes focused on vitality, long-term function, and cellular renewal.\nRecovery and clarity: Fits well in protocols designed to support mental sharpness, stamina, and recovery quality.\nStack synergy: Pairs well with SS-31, Epithalon, Pinealon, and broader regenerative longevity plans.",
+            "dosage": "Commonly used via IV, intramuscular, or subcutaneous protocols depending on programme design and tolerance.\nSession dose and frequency vary depending on whether the goal is restoration, maintenance, or premium longevity support.\nOften used in structured cycles or regular wellness schedules.\nAll dosing decisions should be clinically guided and individualised.",
+            "how_to_use": "Use via the recommended route in your protocol, such as IV, IM, or SC administration.\nFollow a structured schedule rather than occasional use.\nOften paired with hydration, mitochondrial support, and restorative lifestyle practices.\nBest positioned as part of a full health span strategy rather than a stand-alone tool.",
+            "faqs": "How long until I see results?\nSome clients notice changes in energy, clarity, or recovery relatively early, while broader benefits usually build progressively across repeated use in a structured programme.\n\nWhat are the common side effects?\nDepending on route and speed of administration, some individuals may experience flushing, warmth, mild nausea, or injection-site discomfort. Protocols should always be adjusted to tolerance.\n\nHow do I store it?\nStore according to product instructions, commonly in a cool controlled environment. Protect from direct sunlight and heat. Do not freeze unless specifically directed.\n\nCan I stack this with other longevity supports?\nYes. NAD+ is commonly paired with SS-31, Epithalon, Pinealon, and broader health span-support protocols.\n\nIs this suitable for beginners?\nYes. NAD+ is one of the most approachable core products in a premium longevity programme.",
+            "pairs_well": "SS-31 - for mitochondrial support.\nEpithalon - for healthy-ageing and regenerative support.\nPinealon - for cognitive and optimisation support.\nThymalin - for broader resilience and age-supportive protocol design.",
+            "who_for": "Clients focused on vitality, recovery, and healthy ageing.\nIndividuals seeking a foundational longevity support product.\nPeople building a broader resilience and optimisation programme.",
+            "who_not_for": "Individuals expecting one treatment to replace sleep, nutrition, and recovery habits.\nPeople looking for casual use without a structured plan.",
+            "storage": "Store as directed in a cool controlled environment.\nDo not freeze unless specifically instructed.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Epithalon 10mg",
+            "benefits": "Longevity peptide designed to support healthy-ageing and long-term regenerative protocols.\nMay assist with recovery, restorative rhythm, and overall vitality support.\nComplements health span programmes by focusing on internal renewal rather than short-term stimulation.",
+            "usage": "Subcutaneous injection, typically used in structured cycles as guided.",
+            "price": 130.00,
+            "desc": "Epithalon is a peptide commonly used in longevity and regenerative protocols centred on healthy ageing, recovery rhythm, and broader internal renewal. It is often selected by clients who want support for long-term vitality rather than only visible or short-term outcomes.\n\nWithin a VANTIS protocol, Epithalon is positioned as a regenerative health span peptide. It is best suited to clients who want a more age-supportive, cyclical, and restorative longevity strategy.",
+            "full_benefits": "Healthy-ageing support: Often included in programmes focused on long-term renewal and vitality.\nRegenerative rhythm: Commonly used in protocols supporting deeper recovery and restorative function.\nResilience support: Fits well in structured plans aimed at long-term internal maintenance and repair.\nStack synergy: Pairs naturally with NAD+, Pinealon, SS-31, and other premium longevity supports.",
+            "dosage": "Commonly used as a subcutaneous injection in structured cycles at a clinician-directed dose.\nOften run in defined blocks rather than continuously.\nFrequency and cycle length depend on the client's age, goals, and wider longevity strategy.\nAll dosing decisions should be clinically guided and personalised.",
+            "how_to_use": "Inject subcutaneously according to the prescribed cycle.\nUse consistently across the planned longevity block.\nOften paired with sleep optimisation, recovery support, and broader health span measures.\nBest used as part of a long-term internal support plan.",
+            "faqs": "How long until I see results?\nEpithalon is generally used for gradual, longer-term support. Most benefits are assessed across repeated cycles rather than immediate effects.\n\nWhat are the common side effects?\nEpithalon is generally well tolerated. Mild injection-site irritation may occur in some individuals.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other longevity supports?\nYes. Epithalon is commonly paired with NAD+, Pinealon, SS-31, and broader regenerative protocols.\n\nIs this suitable for beginners?\nYes, especially for clients beginning a clinically guided longevity programme.",
+            "pairs_well": "NAD+ - for foundational energy and vitality support.\nPinealon - for broader neuro-longevity support.\nSS-31 - for mitochondrial resilience.\nThymalin - for deeper age-supportive protocol design.",
+            "who_for": "Clients focused on long-term healthy ageing and regenerative support.\nIndividuals looking for a more cyclical, restorative longevity tool.\nPeople wanting a premium peptide within a broader health span strategy.",
+            "who_not_for": "Individuals expecting immediate visible or stimulant-like effects.\nPeople unwilling to follow structured cycles and a wider wellness strategy.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Pinealon 10mg",
+            "benefits": "Neuro-longevity peptide designed to support cognitive resilience and healthy ageing.\nMay assist with mental clarity, recovery quality, and overall optimisation support.\nComplements longevity programmes by supporting a sharper, more resilient internal state.",
+            "usage": "Subcutaneous injection, typically used in structured cycles as guided.",
+            "price": 120.00,
+            "desc": "Pinealon is a peptide commonly used in cognitive and healthy-ageing protocols to support brain health, recovery quality, and broader internal optimisation. It is often chosen by clients who want to support not only physical vitality but also mental clarity and resilience over time.\n\nWithin a VANTIS protocol, Pinealon is positioned as a cognitive health span peptide. It is especially suitable for clients who want a more complete longevity strategy that includes neuro-support and internal performance.",
+            "full_benefits": "Cognitive support: Commonly used in programmes aimed at supporting mental clarity and cognitive resilience.\nHealthy-ageing strategy: Often included in broader plans focused on ageing well and maintaining internal sharpness.\nRecovery and optimisation: Fits well in health span protocols centred on resilience, recovery quality, and mental performance.\nStack synergy: Pairs well with NAD+, Epithalon, SS-31, and other longevity tools.",
+            "dosage": "Commonly used as a subcutaneous injection within clinician-directed cycles.\nFrequency and cycle length are tailored based on the client's goals and protocol design.\nOften used in repeated blocks as part of a broader longevity strategy.\nAll dosing should be individualised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nUse consistently throughout the prescribed cycle.\nOften integrated with sleep optimisation, stress management, and other recovery-focused measures.\nBest positioned as part of a full optimisation programme.",
+            "faqs": "How long until I see results?\nMost clients evaluate Pinealon over several weeks within a structured cycle. Benefits are usually gradual and align with overall clarity, resilience, and recovery quality.\n\nWhat are the common side effects?\nPinealon is generally well tolerated. Mild injection-site discomfort may occur in some individuals.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other longevity supports?\nYes. Pinealon is commonly combined with NAD+, Epithalon, SS-31, and other health span-supportive tools.\n\nIs this suitable for beginners?\nYes, particularly for clients interested in a more complete longevity and optimisation approach.",
+            "pairs_well": "NAD+ - for energy and vitality support.\nEpithalon - for healthy-ageing and restorative support.\nSS-31 - for mitochondrial resilience.\nThymalin - for broader age-supportive protocol design.",
+            "who_for": "Clients focused on mental clarity, resilience, and healthy ageing.\nIndividuals wanting neuro-support within a premium longevity strategy.\nPeople building a full spectrum health span programme.",
+            "who_not_for": "Individuals expecting purely cosmetic or immediate visible effects.\nPeople unwilling to support the protocol with recovery and lifestyle habits.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Thymalin 10mg",
+            "benefits": "Immune and healthy-ageing peptide designed to support resilience and internal regulation.\nMay assist with recovery capacity, immune balance, and overall vitality over time.\nComplements longevity programmes by supporting deeper systemic resilience.",
+            "usage": "Subcutaneous injection, typically used in structured cycles as guided.",
+            "price": 140.00,
+            "desc": "Thymalin is a peptide commonly used in longevity and resilience-focused protocols aimed at supporting immune regulation, recovery capacity, and healthy ageing. It is often selected by clients who want broader internal support as part of a premium healthspan programme.\n\nWithin a VANTIS protocol, Thymalin is positioned as an immune-resilience and healthy-ageing peptide. It is especially relevant for clients who want their longevity plan to include deeper systemic support, not just energy or cognitive optimisation.",
+            "full_benefits": "Immune-resilience support: Commonly used in protocols focused on internal balance and age-supportive resilience.\nHealthy-ageing support: Often included in broader programmes centred on long-term vitality and deeper regulation.\nRecovery support: Fits well in protocols aimed at improving the body's ability to recover and maintain function over time.\nStack synergy: Pairs well with NAD+, Epithalon, Pinealon, and SS-31 in full-spectrum longevity plans.",
+            "dosage": "Commonly used as a subcutaneous injection within clinician-directed cycles.\nProtocol structure varies depending on the wider healthspan strategy and client profile.\nOften used in repeated age-supportive blocks rather than continuous administration.\nAll dosing decisions should be personalised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously according to the prescribed cycle.\nUse consistently during the defined protocol phase.\nOften integrated with restorative lifestyle habits, sleep support, and broader longevity planning.\nBest used within a full systemic resilience strategy.",
+            "faqs": "How long until I see results?\nThymalin is generally used for longer-term support. Benefits are assessed over repeated cycles and are usually related to overall resilience, recovery, and vitality rather than rapid change.\n\nWhat are the common side effects?\nThymalin is generally well tolerated. Mild injection-site discomfort may occur in some individuals.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other longevity supports?\nYes. Thymalin is commonly paired with NAD+, Epithalon, Pinealon, and SS-31 within broader longevity protocols.\n\nIs this suitable for beginners?\nYes, especially for clients who want more complete resilience support as part of a clinically guided healthspan programme.",
+            "pairs_well": "NAD+ - for foundational vitality support.\nEpithalon - for regenerative healthy-ageing support.\nPinealon - for cognitive resilience.\nSS-31 - for mitochondrial and recovery support.",
+            "who_for": "Clients focused on resilience, healthy ageing, and internal regulation.\nIndividuals who want immune-resilience support inside a longevity strategy.\nPeople building a full-spectrum premium healthspan programme.",
+            "who_not_for": "Individuals expecting rapid visible change from a systemic resilience peptide.\nPeople unwilling to follow a structured and consistent protocol.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "SS-31 10mg",
+            "benefits": "Mitochondrial peptide designed to support energy resilience and healthy ageing.\nMay assist with recovery quality, stamina, and deeper cellular support.\nComplements longevity programmes by working at the mitochondrial level.",
+            "usage": "Subcutaneous injection, typically used in structured cycles as guided.",
+            "price": 150.00,
+            "desc": "SS-31 is a mitochondrial-targeting peptide used in advanced wellness and longevity programmes to support cellular energy, recovery, and resilience. It is commonly chosen by clients seeking a more foundational, internal approach to vitality and healthy ageing.\n\nWithin a VANTIS protocol, SS-31 is positioned as a premium mitochondrial-resilience peptide. It is particularly valuable in protocols where energy stability, recovery quality, and long-term cellular support are priorities.",
+            "full_benefits": "Mitochondrial support: Commonly used to support energy systems at the cellular level.\nRecovery and vitality: Often selected in programmes aimed at supporting stamina, resilience, and recovery quality.\nHealthy-ageing strategy: Fits well in protocols focused on deeper internal performance and long-term wellbeing.\nStack synergy: Pairs naturally with NAD+, Epithalon, Pinealon, and Thymalin.",
+            "dosage": "Commonly used as a subcutaneous injection in clinician-directed cycles.\nFrequency and duration vary depending on the client's goals and overall longevity plan.\nUsually incorporated into broader mitochondrial or regenerative strategies rather than used in isolation.\nAll dosing decisions should be personalised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously according to the prescribed protocol.\nUse consistently across the planned cycle.\nOften combined with hydration, sleep optimisation, nutrient support, and recovery practices.\nBest positioned inside a full healthspan and vitality programme.",
+            "faqs": "How long until I see results?\nClients may notice changes in energy, resilience, or recovery gradually over time. Benefits are usually cumulative and best assessed across a structured cycle.\n\nWhat are the common side effects?\nSS-31 is generally well tolerated. Mild injection-site irritation or temporary discomfort may occur in some individuals.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other longevity supports?\nYes. SS-31 is often paired with NAD+, Epithalon, Pinealon, and Thymalin in premium longevity programmes.\n\nIs this suitable for beginners?\nYes, especially for clients wanting a deeper cellular-energy and resilience support product within a premium longevity protocol.",
+            "pairs_well": "NAD+ - for cellular energy support.\nEpithalon - for regenerative healthy-ageing support.\nPinealon - for cognitive resilience and optimisation.\nThymalin - for systemic resilience and internal support.",
+            "who_for": "Clients focused on energy, recovery, and long-term vitality.\nIndividuals wanting mitochondrial-level support in a healthspan programme.\nPeople interested in premium, deeper wellness optimisation.",
+            "who_not_for": "Individuals expecting immediate cosmetic or stimulant-like results.\nPeople unwilling to support the protocol with consistent recovery and wellness habits.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+    ]
+
+    for p in longevity_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['full_benefits']}\n\nRecommended Dosage\n{p['dosage']}\n\nHow To Use\n{p['how_to_use']}\n\nCustomer FAQs\n{p['faqs']}\n\nPairs Well With\n{p['pairs_well']}\n\nWho Is This For?\n{p['who_for']}\n\nWho Is This Not For?\n{p['who_not_for']}\n\nStorage\n{p['storage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (4, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -708,6 +800,12 @@ async def seed_demo_data():
         (34, [("1 Bottle", 140.00), ("5 Bottles", 650.00), ("10 Bottles", 1200.00)]),
         (35, [("1 Bottle", 130.00), ("5 Bottles", 600.00), ("10 Bottles", 1120.00)]),
         (36, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
+        # Longevity & Healthspan packages (products 37-41)
+        (37, [("1 Bottle", 280.00), ("5 Bottles", 1300.00), ("10 Bottles", 2450.00)]),
+        (38, [("1 Bottle", 130.00), ("5 Bottles", 600.00), ("10 Bottles", 1120.00)]),
+        (39, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
+        (40, [("1 Bottle", 140.00), ("5 Bottles", 650.00), ("10 Bottles", 1200.00)]),
+        (41, [("1 Bottle", 150.00), ("5 Bottles", 700.00), ("10 Bottles", 1300.00)]),
     ]
 
     for prod_id, options in package_data:
