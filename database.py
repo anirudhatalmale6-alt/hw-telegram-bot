@@ -1175,6 +1175,71 @@ async def seed_demo_data():
             (8, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Advanced Compounds & Specialty Agents Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Advanced Compounds & Specialty Agents", "Premium research compounds and specialty agents for advanced protocol use only", 9)
+    )
+
+    advanced_products = [
+        {
+            "name": "SLU-PP-332 5mg",
+            "benefits": "Advanced compound positioned for metabolic efficiency, endurance support, and performance-oriented protocols.\nMay support mitochondrial activity, oxidative metabolism, and exercise-mimetic programming in preclinical framing.\nComplements premium body-composition or advanced performance catalogues.",
+            "usage": "Advanced protocol uses only.",
+            "price": 150.00,
+            "desc": "SLU-PP-332 is a synthetic pan-ERR agonist commonly discussed in preclinical metabolic-performance research. Available summaries describe activity across ERRa, ERRb, and ERRy, with reported links to mitochondrial respiration, oxidative muscle programming, and exercise-mimetic effects in animal models.\n\nWithin a premium catalogue, SLU-PP-332 is best positioned as an advanced metabolic and performance compound rather than a mainstream wellness product. It suits a specialty section because current discussion centres on experimental metabolic support, endurance-style applications, and body-composition interest rather than established everyday therapeutic use.",
+            "key_benefits": "Metabolic-positioning support.\nEndurance and mitochondrial framing.\nPremium advanced-performance appeal.",
+        },
+        {
+            "name": "PNC-27 5mg",
+            "benefits": "Highly specialized research peptide positioned for oncology-related interest rather than standard wellness use.\nCommonly described in preclinical literature as a p53-derived membrane-active anticancer peptide.\nBest presented as a strict specialty agent in a separated advanced section.",
+            "usage": "Advanced protocol uses only.",
+            "price": 180.00,
+            "desc": "PNC-27 is a chimeric peptide built around a p53-derived HDM-2-binding region linked to a cell-penetrating sequence. Published preclinical literature describes selective interaction with HDM-2 associated with cancer cell membranes and subsequent pore formation or membranolysis in studied models.\n\nFor catalogue positioning, PNC-27 should sit clearly inside a specialty or advanced section rather than a general peptide list. Its research context is highly specific, and its tone should remain tightly controlled, premium, and clearly non-mainstream.",
+            "key_benefits": "High-complexity research positioning.\nDistinct oncology-research identity.\nStrong specialty-section fit.",
+        },
+        {
+            "name": "Dermorphin 5mg",
+            "benefits": "Specialty peptide best framed for advanced audiences because of its potent opioid-peptide identity.\nFits a premium catalogue when separated from routine recovery or wellness compounds.\nSupports a high-complexity specialty section with narrow, deliberate positioning.",
+            "usage": "Advanced protocol uses only.",
+            "price": 220.00,
+            "desc": "Dermorphin should be positioned very cautiously as a specialty agent, with branding that emphasizes its advanced nature and non-mainstream use profile. In a commercial catalogue structure, it belongs under a clearly separated expert-tier heading rather than beside broader wellness, longevity, or recovery products.\n\nIts strongest role here is structural: it reinforces why this category should be named as a specialty or advanced section rather than something softer like wellness enhancement. That naming choice helps set expectations before the client ever reads the product details.",
+            "key_benefits": "Strong specialty identity.\nClear separation from core catalogue products.\nPremium expert-tier positioning.",
+        },
+        {
+            "name": "Melanotan I 10mg",
+            "benefits": "Specialty pigmentation peptide positioned for tanning-support demand.\nBetter suited to a cosmetic-specialty section than a general wellness category.\nAdds breadth to an advanced catalogue without confusing your core therapeutic lines.",
+            "usage": "Advanced protocol uses only.",
+            "price": 120.00,
+            "desc": "Melanotan I is best framed as a specialty pigmentation peptide with a cosmetic-directed use case. It does not naturally fit inside recovery, longevity, immune, or metabolic categories, which makes a specialty-agents section the cleanest commercial home.\n\nPositioning it here keeps catalogue architecture clean and makes the product easier for clients to understand at a glance. It also avoids forcing a cosmetic-use product into a therapeutic-looking category where it would feel out of place.",
+            "key_benefits": "Cosmetic-specialty clarity.\nClean catalogue separation.\nPremium niche appeal.",
+        },
+        {
+            "name": "Melanotan II 10mg",
+            "benefits": "Specialty peptide commonly associated with tanning-focused demand in research and commercial summaries.\nOften described as a melanocortin agonist with broader noted effects beyond pigmentation alone.\nBest housed inside an expert-tier specialty section.",
+            "usage": "Advanced protocol use only.",
+            "price": 130.00,
+            "desc": "Melanotan II is a synthetic melanocortin peptide most recognized for tanning-related positioning. Commercial and research-oriented summaries also note broader melanocortin-linked effects, which makes it feel even more specialized and less suitable for a standard wellness shelf.\n\nInside your catalogue, this product works best when the section name already prepares the buyer for specialty compounds with narrower, more complex demand profiles. That is one reason Advanced Compounds & Specialty Agents is stronger than a softer category title.",
+            "key_benefits": "Tanning and specialty-cosmetic positioning.\nClear advanced-compound fit.\nNiche premium demand appeal.",
+        },
+        {
+            "name": "EPO 3000 IU",
+            "benefits": "Specialty biologic best framed around oxygen-carrying and endurance-related demand contexts.\nStrongly suited to an advanced section because of its performance-linked identity and sensitivity.\nHelps define the category as high-complexity and clearly non-entry-level.",
+            "usage": "Advanced protocol uses only.",
+            "price": 230.00,
+            "desc": "Erythropoietin is an endogenous glycoprotein hormone, and recombinant forms are widely discussed in the context of red blood cell production and endurance-linked performance effects. Because of that profile, it belongs in a tightly controlled advanced section rather than anywhere near general wellness, recovery, or longevity products.\n\nFrom a catalogue-architecture standpoint, EPO is one of the clearest reasons to choose a strong category name such as Advanced Compounds & Specialty Agents. The label immediately communicates that the section contains products requiring more careful judgment, handling, and positioning.",
+            "key_benefits": "Endurance and oxygen-carrying positioning.\nStrong advanced-section anchor.\nPremium performance-research identity.",
+        },
+    ]
+
+    for p in advanced_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['key_benefits']}\n\nUsage\n{p['usage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (9, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -1247,6 +1312,13 @@ async def seed_demo_data():
         (62, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
         (63, [("1 Vial", 140.00), ("5 Vials", 650.00), ("10 Vials", 1200.00)]),
         (64, [("1 Vial", 130.00), ("5 Vials", 610.00), ("10 Vials", 1140.00)]),
+        # Advanced Compounds & Specialty Agents packages (products 65-70)
+        (65, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
+        (66, [("1 Vial", 180.00), ("5 Vials", 840.00), ("10 Vials", 1540.00)]),
+        (67, [("1 Vial", 220.00), ("5 Vials", 1040.00), ("10 Vials", 1980.00)]),
+        (68, [("1 Vial", 120.00), ("5 Vials", 560.00), ("10 Vials", 1040.00)]),
+        (69, [("1 Vial", 130.00), ("5 Vials", 610.00), ("10 Vials", 1140.00)]),
+        (70, [("1 Vial", 230.00), ("5 Vials", 1070.00), ("10 Vials", 2050.00)]),
     ]
 
     for prod_id, options in package_data:
