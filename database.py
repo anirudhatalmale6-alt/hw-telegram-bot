@@ -1036,6 +1036,83 @@ async def seed_demo_data():
             (6, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Men's Health & Performance Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Men's Health & Performance", "Peptides and compounds for libido, hormonal support, fertility, intimacy, and men's sexual wellness", 7)
+    )
+
+    mens_products = [
+        {
+            "name": "PT-141 10mg",
+            "benefits": "Arousal-focused peptide designed to support libido, desire, and sexual performance.\nMay assist with sexual confidence, responsiveness, and intimacy-focused performance support.\nComplements men's health programmes by targeting central arousal pathways rather than vascular pathways alone.",
+            "usage": "Subcutaneous injection typically used as needed or in structured protocols as guided.",
+            "price": 150.00,
+            "desc": "PT-141, also known as bremelanotide, is a melanocortin-based peptide commonly positioned in men's sexual wellness programmes for libido, arousal, and performance support. Unlike purely vascular approaches, PT-141 is typically discussed as working through central arousal pathways linked to sexual motivation and responsiveness.\n\nWithin a VANTIS protocol, PT-141 is positioned as a core sexual performance and desire-support peptide. It is especially suitable for clients who want more than blood-flow support alone and are looking at arousal, drive, and sexual confidence as part of a broader men's health plan.",
+            "full_benefits": "Libido and desire support: Commonly used in protocols focused on sexual interest and motivation.\nArousal-focused mechanism: Often positioned differently from PDE5-style vascular products because it targets central pathways.\nPerformance confidence support: Fits well in men's health programmes where psychological and central arousal factors matter.\nStack-friendly: Can be positioned alongside hormonal or intimacy-support products depending on the client profile.",
+            "dosage": "Commonly used as a subcutaneous injection according to clinician guidance, either situationally or within a defined protocol.\nTiming depends on the intended use case and individual response.\nAll dosing decisions should be individualised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nBest used within a structured men's health plan rather than casually or unpredictably.\nOften paired with sleep, stress, hormonal, and relationship-health support where relevant.",
+            "faqs": "How long until I see results?\nPT-141 is commonly discussed as having relatively acute effects compared with more hormonal or restorative men's-health peptides, though response varies by individual.\n\nWhat are the common side effects?\nPotential side effects can include nausea, flushing, headache, or transient increases in blood pressure, depending on sensitivity and dose.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other men's-health supports?\nYes. PT-141 can be positioned alongside HCG, Kisspeptin-10, or Oxytocin Acetate depending on whether the focus is libido, hormonal support, or relationship / bonding support.\n\nIs this suitable for beginners?\nYes, if the client's main goal is arousal and desire support rather than fertility or hormone restoration.",
+            "pairs_well": "HCG - when broader male hormone support is part of the plan.\nKisspeptin-10 - for hormonal signalling and reproductive-axis support.\nOxytocin Acetate - for intimacy, bonding, and connection-focused support.",
+            "who_for": "Men focused on libido, desire, and intimacy-related performance support.\nClients wanting a non-vascular, centrally acting sexual-wellness peptide.",
+            "who_not_for": "Clients expecting it to replace broader hormone, cardiovascular, or relationship-health work.\nIndividuals wanting unsupervised or casual use without proper assessment.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "HCG 5000 IU",
+            "benefits": "Hormonal support peptide used in male fertility, testicular support, and endocrine recovery protocols.\nMay assist with testicular function, hormonal signalling, and men's health optimisation.\nComplements testosterone and fertility-focused programmes by supporting the reproductive axis.",
+            "usage": "Subcutaneous injection according to clinician-directed protocol.",
+            "price": 140.00,
+            "desc": "HCG, or human chorionic gonadotropin, is commonly used in men's health programmes to support testicular function, endocrine signalling, fertility-related goals, and recovery of the reproductive axis. It is often positioned in testosterone-support or fertility-support protocols rather than as a direct sexual-performance product.\n\nWithin a VANTIS protocol, HCG is positioned as a reproductive-axis and hormonal-support staple. It is especially relevant for men who want deeper hormonal optimisation, fertility-aware planning, or support for testicular function within a medically supervised programme.",
+            "full_benefits": "Testicular support: Commonly used in programmes focused on maintaining or restoring testicular function.\nHormonal-axis support: Often positioned where LH-like signalling and endogenous hormone support are part of the goal.\nFertility-aware use case: Especially relevant in men's-health plans where fertility preservation or reproductive support matters.\nStack-friendly: Integrates well with broader hormonal and performance protocols.",
+            "dosage": "Used as a subcutaneous injection according to a clinician-directed schedule based on the specific hormonal or fertility goal.\nFrequency and total weekly amount vary depending on the protocol.\nAll dosing should be individualised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nBest used with baseline and follow-up hormonal assessment.\nShould be integrated into a structured endocrine or fertility-support plan rather than used casually.",
+            "faqs": "How long until I see results?\nResponse is usually assessed over a structured protocol using both symptoms and hormone-related follow-up, rather than by short-term subjective effects alone.\n\nWhat are the common side effects?\nPossible side effects may include water retention, mood shifts, local irritation, or hormonal side effects depending on the programme and sensitivity.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other men's-health supports?\nYes. HCG is commonly positioned with testosterone-related protocols, fertility support plans, or selective performance peptides depending on the client's goals.\n\nIs this suitable for beginners?\nYes, if the goal is hormonal or fertility-related support and the client is under proper clinical guidance.",
+            "pairs_well": "Kisspeptin-10 - for deeper reproductive-axis signalling support.\nPT-141 - when libido support is also needed.\nOxytocin Acetate - when relationship or intimacy-focused support is layered into the programme.",
+            "who_for": "Men focused on fertility, hormonal support, or testicular function.\nClients in structured men's-health or endocrine-optimisation programmes.",
+            "who_not_for": "Men looking only for acute sexual-performance effects.\nAnyone using hormonal products without assessment, monitoring, and a defined plan.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Kisspeptin-10 10mg",
+            "benefits": "Reproductive-signalling peptide designed to support the body's own hormonal communication pathways.\nMay assist with libido, fertility-aware protocols, and endocrine-axis support.\nComplements men's health programmes by supporting upstream hormonal signalling rather than acting only at the symptom level.",
+            "usage": "Subcutaneous injection according to clinician-directed protocol.",
+            "price": 150.00,
+            "desc": "Kisspeptin-10 is a reproductive neuropeptide involved in upstream hormonal signalling through the hypothalamic-pituitary-gonadal axis. It is commonly discussed in men's health for its role in stimulating gonadotropin release and supporting reproductive hormone communication.\n\nWithin a VANTIS protocol, Kisspeptin-10 is positioned as a reproductive-axis signalling peptide. It is especially relevant for clients who want a more upstream, physiology-supportive approach to libido, fertility, or hormonal optimisation rather than only symptomatic intervention.",
+            "full_benefits": "Hormonal-signalling support: Commonly positioned as supporting natural gonadotropin and reproductive-axis signalling.\nFertility-aware use case: Often discussed in programmes where reproductive support and hormonal communication are priorities.\nLibido and men's-health support: Can sit inside broader men's performance protocols where hormonal tone matters.\nUpstream positioning: Helps frame the category as more than just symptom-management.",
+            "dosage": "Used as a subcutaneous injection according to clinician-designed protocols.\nTypically run in structured programmes with clear endocrine or reproductive goals.\nAll dosing decisions should be personalised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nUse within a structured men's-health or fertility-support plan.\nBest supported by endocrine monitoring and wider lifestyle optimisation.",
+            "faqs": "How long until I see results?\nKisspeptin-10 is usually positioned as a signalling and endocrine-support peptide, so benefits are better assessed over a sustained protocol rather than through immediate effects alone.\n\nWhat are the common side effects?\nTolerance varies by individual, but the product is generally positioned within structured endocrine-support protocols rather than acute-use settings.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other men's-health supports?\nYes. It pairs well with HCG for broader reproductive support, or with PT-141 when libido and performance are also priorities.\n\nIs this suitable for beginners?\nYes, especially for clients seeking a more physiology-based men's-health strategy rather than purely symptomatic support.",
+            "pairs_well": "HCG - for deeper fertility and reproductive-axis support.\nPT-141 - for libido and arousal support.\nOxytocin Acetate - for connection and intimacy support in selected programmes.",
+            "who_for": "Men focused on reproductive signalling, fertility-aware care, and hormonal support.\nClients who want a more upstream men's-health protocol.",
+            "who_not_for": "Clients looking only for immediate sexual-performance effects.\nIndividuals unwilling to follow structured endocrine assessment and protocol planning.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Oxytocin Acetate 5mg",
+            "benefits": "Intimacy-support peptide designed to complement bonding, connection, and emotional ease.\nMay assist with relationship-focused wellness, closeness, and post-arousal satisfaction support.\nComplements men's health programmes by supporting intimacy and connection alongside physical performance.",
+            "usage": "Injectable use according to clinician-directed protocol.",
+            "price": 120.00,
+            "desc": "Oxytocin is a neuropeptide associated with bonding, closeness, emotional signalling, and selected aspects of sexual and partner interaction. Human data suggest it may influence orgasmic intensity, post-intercourse contentment, and couple-related interaction more than \"classic\" erectile or arousal parameters alone.\n\nWithin a VANTIS protocol, Oxytocin Acetate is positioned as an intimacy and connection-support peptide. It is best suited to men's-health programmes where emotional ease, partner connection, and relational quality are part of the goal rather than purely mechanical performance.",
+            "full_benefits": "Bonding and connection support: Commonly positioned around closeness, empathy, and relational ease.\nIntimacy-focused support: May complement broader sexual-wellness plans where experience and satisfaction matter.\nPost-arousal and couple-experience positioning: Human data suggest stronger relevance for orgasmic and post-interaction factors than core erection metrics.\nSpecialty stack role: Best used as a relationship-enhancing support layer rather than a primary men's-performance product.",
+            "dosage": "Used according to clinician-directed protocol and route of administration.\nBest positioned in selected, structured cases rather than as a general-use product.\nAll dosing decisions should be tailored and professionally supervised.",
+            "how_to_use": "Use only according to professional guidance.\nBest integrated into a thoughtful men's-health or couples-support plan.\nOften paired with stress reduction, sleep support, and broader relationship-health work.",
+            "faqs": "How long until I see results?\nEffects are typically assessed in the context of intimacy, connection, and partner interaction rather than simple performance metrics.\n\nWhat are the common side effects?\nResponse varies depending on route and individual sensitivity. Any use should be protocol-driven and monitored.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution unless otherwise directed. Protect from light and heat. Do not freeze.\n\nCan I stack this with other men's-health supports?\nYes. Oxytocin Acetate can complement PT-141 or broader men's-health support where the goal includes both performance and connection.\n\nIs this suitable for beginners?\nUsually not as a stand-alone first product. It makes more sense as a specialty add-on within a structured plan.",
+            "pairs_well": "PT-141 - for desire plus connection support.\nKisspeptin-10 - for broader men's-health and reproductive-axis support.\nSleep and stress support - when nervous-system calmness is part of the goal.",
+            "who_for": "Men who want intimacy, connection, and relationship-quality support as part of a premium programme.\nClients seeking a more complete approach than physical performance alone.",
+            "who_not_for": "Clients wanting a primary erectile or acute arousal-only solution.\nIndividuals seeking casual use without structured guidance.",
+            "storage": "Store refrigerated at 2-8C after reconstitution unless otherwise directed.\nDo not freeze.\nProtect from direct sunlight and heat.",
+        },
+    ]
+
+    for p in mens_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['full_benefits']}\n\nRecommended Dosage\n{p['dosage']}\n\nHow To Use\n{p['how_to_use']}\n\nCustomer FAQs\n{p['faqs']}\n\nPairs Well With\n{p['pairs_well']}\n\nWho Is This For?\n{p['who_for']}\n\nWho Is This Not For?\n{p['who_not_for']}\n\nStorage\n{p['storage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (7, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -1099,6 +1176,11 @@ async def seed_demo_data():
         (55, [("1 Vial", 130.00), ("5 Vials", 600.00), ("10 Vials", 1120.00)]),
         (56, [("1 Vial", 189.00), ("5 Vials", 880.00), ("10 Vials", 1690.00)]),
         (57, [("1 Vial", 169.00), ("5 Vials", 790.00), ("10 Vials", 1520.00)]),
+        # Men's Health & Performance packages (products 58-61)
+        (58, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
+        (59, [("1 Vial", 140.00), ("5 Vials", 650.00), ("10 Vials", 1200.00)]),
+        (60, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
+        (61, [("1 Vial", 120.00), ("5 Vials", 560.00), ("10 Vials", 1040.00)]),
     ]
 
     for prod_id, options in package_data:
