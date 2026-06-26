@@ -1113,6 +1113,68 @@ async def seed_demo_data():
             (7, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Immune & Inflammation Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Immune & Inflammation", "Peptides for immune modulation, inflammatory balance, gut health, and recovery resilience", 8)
+    )
+
+    immune_products = [
+        {
+            "name": "Thymosin Alpha-1 10mg",
+            "benefits": "Immune-modulating peptide designed to support balance, resilience, and recovery.\nMay assist with immune regulation, inflammatory control, and defence support.\nComplements advanced wellness programmes by supporting immune function in a more strategic way.",
+            "usage": "Subcutaneous injection, typically used in structured protocols as guided.",
+            "price": 150.00,
+            "desc": "Thymosin Alpha-1 is a thymic peptide naturally associated with immune modulation and restoration. It is widely discussed for supporting immune function, improving immune coordination, and helping regulate inflammatory activity.\n\nWithin a VANTIS protocol, Thymosin Alpha-1 is positioned as a premium immune-regulation peptide. It is especially suitable for clients seeking deeper immune support, better recovery resilience, or a more advanced wellness strategy with immune balance at its core.",
+            "full_benefits": "Immune-regulation support: Commonly used in protocols focused on restoring and coordinating immune function.\nInflammatory balance: Often positioned where immune overactivity or chronic inflammatory stress may be contributing to poor recovery.\nRecovery resilience: Fits well in programmes designed to improve overall recovery readiness and defence support.\nStack synergy: Can be paired with KPV or Thymalin in broader immune and inflammation plans.",
+            "dosage": "Commonly used as a subcutaneous injection according to clinician-directed protocol.\nFrequency and course length vary depending on whether the goal is immune support, recovery support, or resilience-building.\nAll dosing decisions should be individualised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nBest used in structured blocks rather than occasional use.\nOften integrated with sleep, stress management, nutrition, and broader wellness planning.",
+            "faqs": "How long until I see results?\nThymosin Alpha-1 is usually assessed across a structured protocol, with benefits judged by overall immune steadiness, resilience, and recovery quality rather than immediate short-term effects.\n\nWhat are the common side effects?\nIt is generally well tolerated in structured programmes, though mild injection-site irritation or local discomfort may occur.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other immune supports?\nYes. It is commonly paired with KPV or thymic-support peptides as part of broader immune and inflammation protocols.\n\nIs this suitable for beginners?\nYes, especially for clients who want a premium immune-support peptide as a core protocol product.",
+            "pairs_well": "KPV - for inflammatory calm and gut-linked immune support.\nThymalin - for broader thymic and resilience support.\nRecovery and wellness support - where immune balance is part of a bigger optimisation plan.",
+            "who_for": "Clients focused on immune resilience, inflammatory balance, and deeper recovery support.\nIndividuals building a premium wellness plan with immune support as a central focus.",
+            "who_not_for": "Clients expecting instant results from a single vial.\nIndividuals using advanced immune products casually without structure or follow-up.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Thymalin 10mg",
+            "benefits": "Thymic peptide complex designed to support immune resilience and systemic recovery.\nMay assist with immune balance, vitality, and age-supportive wellness.\nComplements healthspan and immune programmes by supporting deeper thymic function.",
+            "usage": "Subcutaneous injection, typically used in structured cycles as guided.",
+            "price": 140.00,
+            "desc": "Thymalin is a thymic peptide complex commonly positioned in immune-resilience and healthspan-focused protocols. It is often used where the goal is broader immune balance, systemic recovery, and support for declining immune robustness over time.\n\nWithin a VANTIS protocol, Thymalin is positioned as an immune-resilience and thymic-support peptide. It is especially relevant for clients who want immune support framed in a wider vitality and long-term wellness context.",
+            "full_benefits": "Immune-resilience support: Commonly used in recovery and age-supportive protocols.\nThymic support positioning: Fits well in programmes focused on foundational immune coordination and resilience.\nHealthspan alignment: Often placed within broader longevity and wellness planning.\nStack synergy: Pairs naturally with Thymosin Alpha-1 and KPV in broader immune-support protocols.",
+            "dosage": "Commonly used as a subcutaneous injection within clinician-directed cycles.\nUsually run in repeated blocks rather than continuous use.\nAll dosing should be personalised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nUse consistently through the defined cycle.\nBest integrated into a structured wellness, immune, or healthspan programme.",
+            "faqs": "How long until I see results?\nThymalin is usually assessed over repeated cycles, with benefits linked more to resilience, steadiness, and recovery quality than immediate noticeable change.\n\nWhat are the common side effects?\nThymalin is generally well tolerated in structured use. Mild local irritation may occur at the injection site.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other immune supports?\nYes. Thymalin is often paired with Thymosin Alpha-1 or KPV as part of a broader immune and inflammation-support plan.\n\nIs this suitable for beginners?\nYes, especially for clients who want immune support positioned inside a broader vitality or healthspan strategy.",
+            "pairs_well": "Thymosin Alpha-1 - for broader immune modulation.\nKPV - for inflammatory calm and gut-linked immune support.\nLongevity support - where immune ageing and resilience are key priorities.",
+            "who_for": "Clients focused on immune resilience, recovery capacity, and healthy ageing.\nIndividuals wanting a thymic-support peptide inside a premium wellness protocol.",
+            "who_not_for": "Clients looking only for a quick symptom-focused product.\nPeople unwilling to follow a structured cycle and broader wellness plan.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "KPV 10mg",
+            "benefits": "Anti-inflammatory peptide designed to support immune calm, gut comfort, and inflammatory balance.\nMay assist with immune overactivity, irritation control, and a more comfortable recovery environment.\nComplements immune programmes by addressing inflammation and gut-linked immune stress.",
+            "usage": "Subcutaneous injection, typically once daily or as guided.",
+            "price": 130.00,
+            "desc": "KPV is a short anti-inflammatory peptide commonly positioned in protocols aimed at calming excessive immune activation, supporting gut integrity, and reducing inflammatory burden. It is often chosen when immune and inflammation support need to be approached through restoration and quieting rather than stimulation.\n\nWithin a VANTIS protocol, KPV is positioned as a precision anti-inflammatory and immune-calming peptide. It is especially useful for clients whose wellness picture appears linked to inflammatory overload, gut irritation, or chronic tissue sensitivity.",
+            "full_benefits": "Anti-inflammatory support: Commonly used in protocols focused on calming inflammatory activity and immune overactivation.\nGut-linked immune support: Often positioned where gut barrier health and immune calmness are both relevant.\nComfort and recovery support: Helps support a less reactive and more balanced recovery environment.\nStack synergy: Pairs very well with thymic peptides in broader immune and inflammation plans.",
+            "dosage": "Commonly used as a subcutaneous injection according to clinician guidance.\nOften included in structured blocks depending on whether the focus is gut, inflammation, or broader immune support.\nAll dosing decisions should be personalised and professionally supervised.",
+            "how_to_use": "Inject subcutaneously as directed.\nBest used consistently across the full protocol phase.\nOften paired with nutritional support, stress reduction, and gut-focused recovery habits.",
+            "faqs": "How long until I see results?\nSome clients notice improvements in comfort or inflammatory calm relatively early, while broader immune-balance and recovery benefits often build across several weeks.\n\nWhat are the common side effects?\nKPV is generally well tolerated, with mild injection-site irritation being the most typical issue when it occurs.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other immune supports?\nYes. KPV is commonly paired with Thymosin Alpha-1 or Thymalin in broader immune and inflammation-support programmes.\n\nIs this suitable for beginners?\nYes. KPV is one of the more approachable immune and inflammation peptides, especially when inflammatory calm or gut comfort is a priority.",
+            "pairs_well": "Thymosin Alpha-1 - for broader immune-regulation support.\nThymalin - for resilience and healthspan-focused immune support.\nGut-repair support - when digestive recovery is also important.",
+            "who_for": "Clients focused on inflammation control, immune calmness, and gut-linked wellness support.\nIndividuals seeking a gentler, precision-style immune-support peptide.",
+            "who_not_for": "Clients expecting it to act like a stimulant or instant immune booster.\nPeople unwilling to support the protocol with consistent lifestyle and recovery habits.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+    ]
+
+    for p in immune_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['full_benefits']}\n\nRecommended Dosage\n{p['dosage']}\n\nHow To Use\n{p['how_to_use']}\n\nCustomer FAQs\n{p['faqs']}\n\nPairs Well With\n{p['pairs_well']}\n\nWho Is This For?\n{p['who_for']}\n\nWho Is This Not For?\n{p['who_not_for']}\n\nStorage\n{p['storage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (8, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -1181,6 +1243,10 @@ async def seed_demo_data():
         (59, [("1 Vial", 140.00), ("5 Vials", 650.00), ("10 Vials", 1200.00)]),
         (60, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
         (61, [("1 Vial", 120.00), ("5 Vials", 560.00), ("10 Vials", 1040.00)]),
+        # Immune & Inflammation packages (products 62-64)
+        (62, [("1 Vial", 150.00), ("5 Vials", 700.00), ("10 Vials", 1300.00)]),
+        (63, [("1 Vial", 140.00), ("5 Vials", 650.00), ("10 Vials", 1200.00)]),
+        (64, [("1 Vial", 130.00), ("5 Vials", 610.00), ("10 Vials", 1140.00)]),
     ]
 
     for prod_id, options in package_data:
