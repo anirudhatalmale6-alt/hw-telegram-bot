@@ -1,7 +1,6 @@
 import logging
 import json
-import io
-import qrcode
+import os
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
     ReplyKeyboardMarkup, KeyboardButton
@@ -12,9 +11,10 @@ from telegram.ext import (
 )
 from database import get_db
 from config import (
-    BOT_TOKEN, ADMIN_CHAT_ID, DELIVERY_OPTIONS,
-    PAYNOW_UEN, PAYNOW_COMPANY, BASE_URL
+    BOT_TOKEN, ADMIN_CHAT_ID, DELIVERY_OPTIONS, BASE_URL
 )
+
+PAYNOW_QR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paynow_qr.jpg")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -649,53 +649,38 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await db.close()
 
     if payment_method == "paynow":
-        qr_data = (
-            f"00020101021226"
-            f"0009SG.PAYNOW"
-            f"01012"
-            f"02{len(PAYNOW_UEN):02d}{PAYNOW_UEN}"
-            f"0301 0"
-            f"5802SG"
-            f"5303SGD"
-            f"54{len(f'{total:.2f}'):02d}{total:.2f}"
-            f"5907{PAYNOW_COMPANY[:25]}"
-            f"6304"
-        )
-        qr = qrcode.make(qr_data)
-        buf = io.BytesIO()
-        qr.save(buf, format="PNG")
-        buf.seek(0)
-
         await query.edit_message_text(
             f"Order #{order_id} Created!\n"
             "━━━━━━━━━━━━━━━━━━\n\n"
             f"Total: SGD {total:.2f}\n\n"
             "Please scan the PayNow QR code below to complete payment.\n"
-            "After payment, we will verify and process your order.\n\n"
-            "[DEMO MODE - No actual payment required]"
+            "Once you have paid, tap the 'I Have Paid' button."
         )
+
+        keyboard = [
+            [InlineKeyboardButton("I Have Paid", callback_data=f"paid_{order_id}")],
+            [InlineKeyboardButton("Cancel Order", callback_data=f"cancel_order_{order_id}")],
+        ]
         await context.bot.send_photo(
             chat_id=telegram_id,
-            photo=buf,
-            caption=f"PayNow QR Code - SGD {total:.2f}\nOrder #{order_id}"
+            photo=open(PAYNOW_QR_PATH, "rb"),
+            caption=f"PayNow QR Code\nOrder #{order_id} - SGD {total:.2f}\n\nScan this QR code with your banking app to pay.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
     else:
         await query.edit_message_text(
             f"Order #{order_id} Created!\n"
             "━━━━━━━━━━━━━━━━━━\n\n"
             f"Total: SGD {total:.2f}\n\n"
-            "[DEMO MODE]\n"
-            "In production, you would be redirected to a Stripe checkout page.\n"
-            "For demo purposes, the order has been recorded.\n\n"
-            "Your order is being processed!"
+            "Stripe payment is coming soon.\n"
+            "Please use PayNow for now."
         )
-
-    keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
-    await context.bot.send_message(
-        chat_id=telegram_id,
-        text="Thank you for your order! You can check the status anytime from the menu.",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+        keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
+        await context.bot.send_message(
+            chat_id=telegram_id,
+            text="To pay, please go back and select PayNow.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
 
     if ADMIN_CHAT_ID:
         items_text = "\n".join(
@@ -711,12 +696,167 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Delivery: {context.user_data.get('delivery_method', 'N/A')}\n\n"
             f"Items:\n{items_text}\n\n"
             f"Total: SGD {total:.2f}\n"
-            f"Payment: {payment_method.upper()}"
+            f"Payment: {payment_method.upper()}\n"
+            f"Status: Awaiting payment"
         )
+        admin_keyboard = [
+            [InlineKeyboardButton("Confirm Payment", callback_data=f"admin_confirm_{order_id}"),
+             InlineKeyboardButton("Reject", callback_data=f"admin_reject_{order_id}")],
+        ]
         try:
-            await context.bot.send_message(chat_id=int(ADMIN_CHAT_ID), text=admin_text)
+            await context.bot.send_message(
+                chat_id=int(ADMIN_CHAT_ID), text=admin_text,
+                reply_markup=InlineKeyboardMarkup(admin_keyboard),
+            )
         except Exception as e:
             logger.error(f"Failed to notify admin: {e}")
+
+
+async def handle_paid_confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    telegram_id = query.from_user.id
+    order_id = int(query.data.split("_")[1])
+
+    db = await get_db()
+    await db.execute(
+        "UPDATE orders SET payment_status = 'submitted' WHERE id = ? AND telegram_id = ?",
+        (order_id, telegram_id),
+    )
+    await db.commit()
+    await db.close()
+
+    await query.edit_message_caption(
+        caption=(
+            f"Order #{order_id}\n"
+            "━━━━━━━━━━━━━━━━━━\n\n"
+            "Thank you! Your payment has been submitted.\n"
+            "We will verify and confirm your order shortly.\n\n"
+            "You can check your order status anytime from the menu."
+        ),
+    )
+
+    keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
+    await context.bot.send_message(
+        chat_id=telegram_id,
+        text="Payment submitted! We'll confirm your order once verified.",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+    )
+
+    if ADMIN_CHAT_ID:
+        admin_keyboard = [
+            [InlineKeyboardButton("Confirm Payment", callback_data=f"admin_confirm_{order_id}"),
+             InlineKeyboardButton("Reject", callback_data=f"admin_reject_{order_id}")],
+        ]
+        try:
+            await context.bot.send_message(
+                chat_id=int(ADMIN_CHAT_ID),
+                text=f"PAYMENT SUBMITTED for Order #{order_id}\nCustomer says they have paid. Please verify and confirm.",
+                reply_markup=InlineKeyboardMarkup(admin_keyboard),
+            )
+        except Exception as e:
+            logger.error(f"Failed to notify admin of payment: {e}")
+
+
+async def handle_cancel_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    telegram_id = query.from_user.id
+    order_id = int(query.data.split("_")[2])
+
+    db = await get_db()
+    await db.execute(
+        "UPDATE orders SET order_status = 'cancelled', payment_status = 'cancelled' "
+        "WHERE id = ? AND telegram_id = ?",
+        (order_id, telegram_id),
+    )
+    await db.commit()
+    await db.close()
+
+    await query.edit_message_caption(
+        caption=f"Order #{order_id} has been cancelled.",
+    )
+
+    keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
+    await context.bot.send_message(
+        chat_id=telegram_id,
+        text="Order cancelled. You can start a new order anytime.",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+    )
+
+
+async def handle_admin_order_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    parts = query.data.split("_")
+    action = parts[1]
+    order_id = int(parts[2])
+
+    db = await get_db()
+    cursor = await db.execute(
+        "SELECT telegram_id, total, full_name FROM orders WHERE id = ?", (order_id,)
+    )
+    order = await cursor.fetchone()
+
+    if not order:
+        await query.edit_message_text(f"Order #{order_id} not found.")
+        await db.close()
+        return
+
+    customer_telegram_id = order[0]
+    total = order[1]
+    customer_name = order[2]
+
+    if action == "confirm":
+        await db.execute(
+            "UPDATE orders SET payment_status = 'paid', order_status = 'processing' WHERE id = ?",
+            (order_id,),
+        )
+        await db.commit()
+        await query.edit_message_text(
+            query.message.text + f"\n\nPAYMENT CONFIRMED by admin."
+        )
+        try:
+            keyboard = [[InlineKeyboardButton("View Orders", callback_data="my_orders")]]
+            await context.bot.send_message(
+                chat_id=customer_telegram_id,
+                text=(
+                    f"Order #{order_id} - Payment Confirmed!\n"
+                    "━━━━━━━━━━━━━━━━━━\n\n"
+                    f"Your payment of SGD {total:.2f} has been verified.\n"
+                    "Your order is now being processed.\n\n"
+                    "Thank you for your purchase!"
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+            )
+        except Exception as e:
+            logger.error(f"Failed to notify customer: {e}")
+
+    elif action == "reject":
+        await db.execute(
+            "UPDATE orders SET payment_status = 'rejected', order_status = 'cancelled' WHERE id = ?",
+            (order_id,),
+        )
+        await db.commit()
+        await query.edit_message_text(
+            query.message.text + f"\n\nPAYMENT REJECTED by admin."
+        )
+        try:
+            keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
+            await context.bot.send_message(
+                chat_id=customer_telegram_id,
+                text=(
+                    f"Order #{order_id} - Payment Issue\n"
+                    "━━━━━━━━━━━━━━━━━━\n\n"
+                    "We could not verify your payment. "
+                    "Please contact support if you believe this is an error."
+                ),
+                reply_markup=InlineKeyboardMarkup(keyboard),
+            )
+        except Exception as e:
+            logger.error(f"Failed to notify customer: {e}")
+
+    await db.close()
 
 
 async def show_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -885,6 +1025,9 @@ def build_app():
     app.add_handler(CallbackQueryHandler(show_cart, pattern="^cart$"))
     app.add_handler(CallbackQueryHandler(update_cart_item, pattern=r"^cart(inc|dec|del)_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_payment, pattern=r"^pay_"))
+    app.add_handler(CallbackQueryHandler(handle_paid_confirmation, pattern=r"^paid_\d+$"))
+    app.add_handler(CallbackQueryHandler(handle_cancel_order, pattern=r"^cancel_order_\d+$"))
+    app.add_handler(CallbackQueryHandler(handle_admin_order_action, pattern=r"^admin_(confirm|reject)_\d+$"))
     app.add_handler(CallbackQueryHandler(show_orders, pattern="^my_orders$"))
     app.add_handler(CallbackQueryHandler(show_faq, pattern="^faq$"))
     app.add_handler(CallbackQueryHandler(show_main_menu, pattern="^main_menu$"))
