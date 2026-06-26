@@ -761,6 +761,113 @@ async def seed_demo_data():
             (4, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
         )
 
+    # --- Brain, Mood & Cognition Category ---
+    await db.execute(
+        "INSERT INTO categories (name, description, sort_order) VALUES (?, ?, ?)",
+        ("Brain, Mood & Cognition", "Peptides and compounds for focus, cognition, mood regulation, sleep quality, and nervous-system support", 5)
+    )
+
+    brain_products = [
+        {
+            "name": "Semax 10mg",
+            "benefits": "Nootropic peptide designed to support focus, clarity, and neurocognitive performance.\nMay assist with mental sharpness, resilience, and cognitive recovery.\nComplements brain optimisation programmes by supporting neurotrophic pathways.",
+            "usage": "Intranasal or subcutaneous use, typically in structured cycles as guided.",
+            "price": 120.00,
+            "desc": "Semax is a neuroactive peptide commonly used in cognitive-support protocols focused on attention, clarity, resilience, and neurotrophic support. It is often selected by clients who want a sharper, more performance-oriented option within a broader brain-health programme.\n\nWithin a VANTIS protocol, Semax is positioned as a cognitive-performance and neuro-support peptide. It is especially suitable for clients seeking better focus, cleaner mental energy, and a more advanced nootropic-style support strategy.",
+            "full_benefits": "Focus and clarity support: Commonly used in protocols aimed at improving attention and mental sharpness.\nNeurotrophic support: Associated with neuroprotective and brain-supportive pathways in cognitive peptide discussions.\nPerformance-oriented positioning: Often selected where cognitive optimisation and mental resilience are priorities.\nStack synergy: Pairs well with Selank, DSIP, and broader brain-optimisation plans.",
+            "dosage": "Commonly used via intranasal or subcutaneous protocols, depending on clinician preference and programme design.\nOften run in structured cycles rather than continuous daily use.\nFrequency and duration depend on the client's goals, tolerance, and broader protocol.\nAll dosing decisions should be clinically guided and individualised.",
+            "how_to_use": "Use according to the prescribed route, commonly intranasal or subcutaneous.\nFollow a structured cycle rather than occasional use for best consistency.\nOften paired with sleep optimisation, stress control, and foundational recovery habits.\nBest positioned as part of a wider cognitive-performance strategy.",
+            "faqs": "How long until I see results?\nSome clients notice changes in focus and mental clarity relatively early, while broader cognitive benefits usually become clearer over several weeks of consistent use.\n\nWhat are the common side effects?\nTolerance varies by individual and route of administration. Mild nasal irritation or local injection-site discomfort may occur depending on how it is used.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other brain supports?\nYes. Semax is commonly paired with Selank for calm focus, or with DSIP when sleep recovery is also part of the programme.\n\nIs this suitable for beginners?\nYes, especially for clients looking for a more performance-focused entry into cognitive peptide support.",
+            "pairs_well": "Selank - for calm focus and stress regulation.\nDSIP - when sleep quality and recovery are also priorities.\nMelatonin - for clients needing circadian support within a broader brain protocol.",
+            "who_for": "Clients focused on focus, mental sharpness, and cognitive optimisation.\nIndividuals wanting performance-oriented support within a brain-health programme.",
+            "who_not_for": "Individuals expecting stimulant-like effects or instant transformation.\nPeople unwilling to support the protocol with sleep, recovery, and lifestyle structure.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Selank 10mg",
+            "benefits": "Calm-focus peptide designed to support stress regulation and emotional steadiness.\nMay assist with anxious overactivation, mental clarity, and cognitive composure.\nComplements brain-health programmes by promoting clearer thinking without sedation.",
+            "usage": "Intranasal or subcutaneous use, typically in structured cycles as guided.",
+            "price": 115.00,
+            "desc": "Selank is a neuroregulatory peptide commonly used in protocols centred on anxiety support, emotional steadiness, and calm cognitive performance. It is often chosen by clients who want improved stress handling and clearer thinking without a sedating feel.\n\nWithin a VANTIS protocol, Selank is positioned as a calm-focus and stress-regulation peptide. It is especially relevant for clients whose cognition is affected by overactivation, nervous tension, or poor mental composure.",
+            "full_benefits": "Stress-regulation support: Commonly used in protocols focused on emotional steadiness and lower reactivity.\nCalm cognitive function: Often selected to support clearer thinking without heavy sedation.\nMood and composure: Fits well in programmes aimed at smoother daily mental performance.\nStack synergy: Pairs naturally with Semax and DSIP depending on whether focus or sleep is also a priority.",
+            "dosage": "Commonly used via intranasal or subcutaneous protocols according to clinician guidance.\nUsually run in structured cycles, with frequency based on client response and protocol style.\nAll dosing should be individualised and professionally supervised.",
+            "how_to_use": "Use according to the prescribed route, commonly intranasal or subcutaneous.\nBest results usually come from consistent use across a defined cycle.\nOften integrated with nervous-system recovery, stress management, and sleep support.\nWorks well inside a broader mental-performance and wellbeing programme.",
+            "faqs": "How long until I see results?\nMany clients notice changes in emotional steadiness and stress handling within the first few weeks, while broader cognitive composure tends to build with consistent use.\n\nWhat are the common side effects?\nSelank is generally positioned as non-sedating, though tolerance varies. Mild nasal irritation or local site discomfort may occur depending on route.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other brain supports?\nYes. Selank is commonly paired with Semax for calm focus, or with DSIP when sleep recovery is also important.\n\nIs this suitable for beginners?\nYes, especially for clients seeking a gentler mood-and-focus support product.",
+            "pairs_well": "Semax - for calm focus and cognitive performance.\nDSIP - for sleep-linked nervous-system support.\nMelatonin - when circadian rhythm and sleep onset are part of the plan.",
+            "who_for": "Clients dealing with stress-linked brain fog, overactivation, or anxious mental patterns.\nIndividuals wanting clearer thinking with a calmer overall feel.",
+            "who_not_for": "Individuals looking for a sedative or immediate shutdown effect.\nPeople unwilling to address stress hygiene and sleep habits alongside the protocol.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "DSIP 10mg",
+            "benefits": "Sleep-regulation peptide designed to support deeper recovery and more restorative rest.\nMay assist with sleep quality, stress recovery, and next-day steadiness.\nComplements cognitive programmes by improving the sleep foundation behind brain performance.",
+            "usage": "Subcutaneous injection, typically used in the evening within structured cycles.",
+            "price": 110.00,
+            "desc": "DSIP, or Delta Sleep-Inducing Peptide, is commonly used in protocols focused on sleep quality, recovery rhythm, and nervous-system restoration. It is generally positioned not as a sedative, but as a peptide associated with sleep architecture and deeper restorative rest.\n\nWithin a VANTIS protocol, DSIP is positioned as a deep-rest and recovery-support peptide. It is best suited to clients whose cognition, mood, or performance is being undermined by poor sleep quality and weak overnight recovery.",
+            "full_benefits": "Sleep-quality support: Commonly used in protocols centred on deeper, more restorative sleep.\nRecovery-linked brain support: Helps position sleep as the base layer of mood and cognitive performance.\nNon-sedative framing: Often discussed as supporting sleep architecture rather than acting like a conventional sleep medication.\nStack synergy: Pairs well with Semax, Selank, and melatonin in broader brain and recovery plans.",
+            "dosage": "Commonly used as a subcutaneous injection, often in the evening.\nUsually run in structured cycles, especially when sleep recovery is a central focus.\nFrequency and duration depend on the client's sleep pattern and overall programme.\nAll dosing decisions should be clinically guided and individualised.",
+            "how_to_use": "Inject subcutaneously as directed, typically later in the day or evening.\nUse consistently through the sleep-support phase of the programme.\nPair with good sleep hygiene, light management, and a consistent sleep schedule.\nBest results come when recovery practices are addressed alongside peptide support.",
+            "faqs": "How long until I see results?\nMany people report better sleep quality and steadiness within the first two to four weeks, with deeper recovery benefits becoming more obvious over longer consistent use.\n\nWhat are the common side effects?\nDSIP is generally framed as non-groggy in comparison with sedative sleep aids, though individual response varies. Mild injection-site discomfort may occur.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other brain supports?\nYes. DSIP is often combined with Semax or Selank where cognition and stress regulation are also being addressed.\n\nIs this suitable for beginners?\nYes, particularly for clients whose main issue is poor sleep quality rather than daytime focus.",
+            "pairs_well": "Selank - for sleep plus calmer nervous-system tone.\nSemax - for recovery plus daytime cognitive support.\nMelatonin - for clients who also need circadian support.",
+            "who_for": "Clients with sleep-linked brain fog, poor recovery, or inconsistent rest.\nIndividuals wanting a deeper-rest support peptide in a cognitive programme.",
+            "who_not_for": "Individuals expecting it to behave like a heavy sedative.\nPeople unwilling to improve sleep hygiene and routine alongside the protocol.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "Cerebrolysin 60mg",
+            "benefits": "Premium neurotrophic support injectable designed for brain recovery and cognitive resilience.\nMay assist with neuro-support, recovery capacity, and higher-level brain optimisation.\nComplements advanced cognition programmes by supporting the nervous system more deeply.",
+            "usage": "Injectable use only, according to clinician-directed protocol.",
+            "price": 140.00,
+            "desc": "Cerebrolysin is a neuropeptide preparation commonly positioned in advanced brain-support and neuro-recovery programmes. It is typically chosen for higher-touch protocols where deeper nervous-system support, resilience, and cognitive recovery are priorities.\n\nWithin a VANTIS protocol, Cerebrolysin is positioned as a premium neuro-recovery and brain-support injectable. It is best suited to more advanced clients and clinician-managed programmes rather than simple entry-level cognitive support.",
+            "full_benefits": "Neuro-support positioning: Commonly used in higher-level brain and recovery protocols.\nCognitive-resilience support: Often selected in programmes focused on nervous-system recovery and long-term mental performance.\nAdvanced tier product: Helps anchor the premium end of the Brain, Mood & Cognition category.\nStack synergy: Can sit alongside foundational mood, sleep, and nootropic strategies in a structured programme.",
+            "dosage": "Used only according to clinician-directed injectable protocols.\nFrequency and duration vary widely based on the programme design and client profile.\nUsually reserved for structured, supervised courses.",
+            "how_to_use": "Administer only under professional guidance according to the chosen protocol.\nBest positioned in more advanced or intensive brain-health programmes.\nOften paired with foundational work in sleep, stress regulation, and recovery.",
+            "faqs": "How long until I see results?\nResponse is usually evaluated across a structured treatment course rather than from a single use.\n\nWhat are the common side effects?\nTolerance depends on route and programme design. Any injectable use should be professionally supervised and monitored.\n\nHow do I store it?\nStore according to product instructions in a cool, controlled environment and protect from light and heat.\n\nCan I stack this with other brain supports?\nYes, but only in a clearly structured and professionally managed protocol.\n\nIs this suitable for beginners?\nNo. Cerebrolysin is better positioned as an advanced, clinic-led product.",
+            "pairs_well": "Semax - for cognitive performance support.\nSelank - for stress-linked cognitive smoothing.\nDSIP - for sleep recovery support.",
+            "who_for": "Clients in advanced brain-optimisation or neuro-recovery programmes.\nIndividuals wanting a more premium and intensive brain-support option.",
+            "who_not_for": "Casual users or beginners seeking simple entry-level mood or sleep support.",
+            "storage": "Store according to product instructions.\nProtect from light and excessive heat.\nKeep in a cool controlled environment.",
+        },
+        {
+            "name": "VIP 10mg",
+            "benefits": "Neuro-regulatory peptide designed to support nervous-system balance and internal calm.\nMay assist with mood stability, neuroinflammatory balance, and overall regulation.\nComplements cognition programmes where nervous-system balance is a key priority.",
+            "usage": "Injectable use according to clinician-directed protocol.",
+            "price": 150.00,
+            "desc": "VIP, or vasoactive intestinal peptide, is used in specialised protocols focused on regulation, mood balance, and nervous-system support. It is generally considered in higher-touch programmes where internal balance and neuro-regulatory support are central goals.\n\nWithin a VANTIS protocol, VIP is positioned as a regulation-focused neuro-support peptide. It is best suited to clients who need a calmer, more balanced internal state as part of broader cognitive or mood support.",
+            "full_benefits": "Nervous-system balance: Commonly used in protocols focused on regulation and internal calm.\nMood-support positioning: Can fit into plans centred on steadiness and less internal overactivation.\nHigher-touch use case: Best placed in more specialised, clinically guided protocols.\nStack synergy: Can complement Semax, Selank, and DSIP in carefully designed programmes.",
+            "dosage": "Used according to clinician-directed injectable protocol.\nFrequency and course length depend on the client profile and overall plan.\nBest reserved for structured and supervised use.",
+            "how_to_use": "Use only according to clinical guidance.\nOften integrated into wider regulation and nervous-system recovery plans.\nShould sit inside a complete programme rather than being used casually.",
+            "faqs": "How long until I see results?\nBenefits are typically assessed across a defined protocol rather than after one use.\n\nWhat are the common side effects?\nResponse varies by individual and protocol. Any use should be professionally supervised and monitored.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution unless otherwise specified by the product instructions. Protect from light and heat.\n\nCan I stack this with other brain supports?\nYes, but usually only in more specialised, clinician-managed protocols.\n\nIs this suitable for beginners?\nNot usually. VIP is better suited to advanced, guided programmes.",
+            "pairs_well": "Selank - for calmness and mood regulation.\nDSIP - for recovery and nervous-system reset.\nMelatonin - for clients needing additional sleep-rhythm support.",
+            "who_for": "Clients needing more specialised nervous-system regulation support.\nIndividuals in advanced mood and cognition programmes.",
+            "who_not_for": "Beginners seeking a simple starter peptide.\nCasual users without structured clinical supervision.",
+            "storage": "Store refrigerated at 2-8C after reconstitution unless otherwise directed.\nProtect from light and heat.\nDo not freeze.",
+        },
+        {
+            "name": "Melatonin 10mg",
+            "benefits": "Sleep-rhythm support peptide/hormonal aid designed to improve recovery timing and night-time regulation.\nMay assist with sleep onset, circadian support, and next-day steadiness.\nComplements brain and mood programmes by strengthening the sleep foundation behind cognition.",
+            "usage": "Typically used in the evening according to clinician-guided protocol.",
+            "price": 60.00,
+            "desc": "Melatonin is commonly used in protocols centred on circadian rhythm, sleep timing, and recovery quality. In a brain-health context, it is best positioned not as a basic sleep aid, but as a tool to support the timing and consistency of restorative rest.\n\nWithin a VANTIS protocol, Melatonin is positioned as a circadian and sleep-foundation support. It is especially useful for clients whose cognition, mood, or stress resilience is undermined by irregular sleep timing or weak night-time recovery.",
+            "full_benefits": "Circadian support: Commonly used in protocols focused on sleep timing and rhythm consistency.\nSleep-foundation support: Helps strengthen the recovery base behind mood and cognition.\nRecovery quality positioning: Best used where next-day steadiness and restorative rest are priorities.\nStack synergy: Pairs well with DSIP, Selank, and broader sleep-optimisation plans.",
+            "dosage": "Typically used in the evening according to clinician guidance and product format.\nFrequency depends on the client's sleep pattern and protocol design.\nBest used as part of a full sleep-support strategy rather than alone.",
+            "how_to_use": "Use later in the day or evening as directed.\nPair with consistent bed and wake timing, light hygiene, and reduced evening overstimulation.\nBest positioned inside a structured sleep-recovery plan.",
+            "faqs": "How long until I see results?\nSome clients notice changes in sleep timing and consistency relatively quickly, while broader benefits to recovery and mood depend on regular use and strong sleep habits.\n\nWhat are the common side effects?\nDepending on timing and dose, some individuals may feel groggier if protocols are poorly timed. Use should be matched carefully to sleep schedule and tolerance.\n\nHow do I store it?\nStore according to product instructions in a cool, controlled environment and protect from direct sunlight and heat.\n\nCan I stack this with other brain supports?\nYes. Melatonin is commonly paired with DSIP and broader brain-recovery protocols when sleep is a central issue.\n\nIs this suitable for beginners?\nYes, especially for clients whose primary issue is circadian disruption or weak sleep timing.",
+            "pairs_well": "DSIP - for deeper sleep-support strategies.\nSelank - for stress-related sleep disruption.\nSemax - when better sleep is needed to support daytime cognition.",
+            "who_for": "Clients with irregular sleep timing, weak recovery, or sleep-linked brain fog.\nIndividuals needing a foundational sleep-rhythm support product.",
+            "who_not_for": "Individuals expecting it to fix poor sleep habits without behavioural change.\nPeople using it casually without regard to timing and routine.",
+            "storage": "Store according to product instructions.\nProtect from direct sunlight and heat.\nKeep in a cool controlled environment.",
+        },
+    ]
+
+    for p in brain_products:
+        full_info = f"Description\n{p['desc']}\n\nKey Benefits\n{p['full_benefits']}\n\nRecommended Dosage\n{p['dosage']}\n\nHow To Use\n{p['how_to_use']}\n\nCustomer FAQs\n{p['faqs']}\n\nPairs Well With\n{p['pairs_well']}\n\nWho Is This For?\n{p['who_for']}\n\nWho Is This Not For?\n{p['who_not_for']}\n\nStorage\n{p['storage']}"
+        await db.execute(
+            "INSERT INTO products (category_id, name, description, benefits, usage_info, full_info, price, image_url) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (5, p["name"], p["desc"], p["benefits"], p["usage"], full_info, p["price"], "")
+        )
+
     package_data = [
         (1, [("1 Bottle", 179.00), ("5 Bottles", 830.00), ("10 Bottles", 1540.00)]),
         (2, [("1 Bottle", 180.00), ("5 Bottles", 840.00), ("10 Bottles", 1540.00)]),
@@ -806,6 +913,13 @@ async def seed_demo_data():
         (39, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
         (40, [("1 Bottle", 140.00), ("5 Bottles", 650.00), ("10 Bottles", 1200.00)]),
         (41, [("1 Bottle", 150.00), ("5 Bottles", 700.00), ("10 Bottles", 1300.00)]),
+        # Brain, Mood & Cognition packages (products 42-47)
+        (42, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
+        (43, [("1 Bottle", 115.00), ("5 Bottles", 540.00), ("10 Bottles", 1000.00)]),
+        (44, [("1 Bottle", 110.00), ("5 Bottles", 520.00), ("10 Bottles", 960.00)]),
+        (45, [("1 Bottle", 140.00), ("5 Bottles", 650.00), ("10 Bottles", 1200.00)]),
+        (46, [("1 Bottle", 150.00), ("5 Bottles", 700.00), ("10 Bottles", 1300.00)]),
+        (47, [("1 Bottle", 60.00), ("5 Bottles", 280.00), ("10 Bottles", 520.00)]),
     ]
 
     for prod_id, options in package_data:
