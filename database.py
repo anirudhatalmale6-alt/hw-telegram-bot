@@ -462,6 +462,36 @@ async def seed_demo_data():
             "who_not_for": "Individuals expecting instant recovery without rehab or load management.\nPeople wanting casual use without a defined recovery plan.",
             "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
         },
+        {
+            "name": "Recovery Blend Plus (GHK-Cu 50mg + BPC-157 10mg + TB-500 10mg)",
+            "benefits": "Higher-strength recovery blend for more intensive healing phases.\nMay assist with more significant tissue demands or longer-term recovery needs.\nDesigned as an upgraded protocol for clients needing deeper support.",
+            "usage": "Subcutaneous injection, typically several times per week as guided.",
+            "price": 249.00,
+            "desc": "Recovery Blend Plus increases the dose of GHK-Cu and BPC-157 while maintaining TB-500 to provide a more intensive healing blend. It is intended for clients with higher recovery demands - such as more extensive procedures, longstanding soft tissue issues, or complex multi-site programmes - who require deeper and longer support.\n\nIn the VANTIS system, Recovery Blend Plus is positioned as an enhanced, higher-tier recovery formula for clients and phases where standard support is not enough.",
+            "full_benefits": "Enhanced regenerative support: Increased GHK-Cu and BPC-157 for more robust support of tissue repair and regeneration.\nFor demanding recovery phases: Suited to clients with more extensive healing needs or longer histories of tissue stress.\nSystemic plus local coverage: Maintains TB-500 for system-wide support.\nSingle-vial convenience: Higher-intensity recovery stack without managing multiple products.",
+            "dosage": "Used as subcutaneous injections several times per week at a clinician-directed dose.\nOften used in similarly structured blocks as Recovery Blend but may run longer depending on needs.\nAll dosing and duration decisions must be individualised and reviewed regularly.",
+            "how_to_use": "Inject subcutaneously into appropriate sites as directed.\nUse consistently over the defined recovery period.\nCoordinate with rehabilitation, graded loading, and supportive lifestyle measures for best results.",
+            "faqs": "How long until I see results?\nRecovery Blend Plus is intended for more demanding cases; improvements occur progressively over the planned recovery block. Visible and functional changes are typically tracked via movement, pain levels, and activity tolerance.\n\nWhat are the common side effects?\nLike standard Recovery Blend: generally well tolerated, with possible mild injection-site irritation.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other healing supports?\nYes, but it already represents a robust recovery formula; additional stacking should be conservative and guided.\n\nIs this suitable for beginners?\nMore appropriate for clients with significant recovery needs or those already familiar with structured peptide programmes.",
+            "pairs_well": "KPV - for added inflammation control.\nSelective metabolic support - when recovery is combined with structured recomposition.",
+            "who_for": "Clients with higher tissue demands or more complex recovery needs.\nPost-procedure or chronic-issue clients needing a stronger support profile.",
+            "who_not_for": "Individuals with minor issues that can be managed with simpler protocols.\nAnyone seeking aggressive therapy without a clear clinical rationale.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
+        {
+            "name": "KLOW Blend (GHK-Cu 50mg + BPC-157 10mg + TB-500 10mg + KPV 10mg)",
+            "benefits": "Full-spectrum healing and anti-inflammatory blend for advanced recovery.\nMay support tissue repair, regeneration, gut and skin calmness, and overall recovery quality.\nDesigned as the flagship VANTIS recovery stack for demanding protocols.",
+            "usage": "Subcutaneous injection, typically several times per week as guided.",
+            "price": 299.00,
+            "desc": "KLOW Blend brings together four key peptides - GHK-Cu, BPC-157, TB-500, and KPV - into a single, all-inclusive recovery formula. It is designed for clients and programmes that demand maximal support for tissue healing, regeneration, gut and skin calmness, and overall recovery experience.\n\nWithin the VANTIS range, KLOW Blend is the flagship, full-spectrum recovery stack, intended for the most demanding recovery phases under close guidance.",
+            "full_benefits": "Comprehensive tissue repair: GHK-Cu, BPC-157, and TB-500 collectively support connective tissue, muscle, fascia, and skin regeneration.\nInflammation and gut support: KPV adds an anti-inflammatory and gut-supportive dimension for calmer healing.\nSystemic and local effects: Addresses both local tissue needs and broader systemic recovery demands.\nSingle-vial simplicity: High-end recovery solution in one product, ideal for complex protocols.",
+            "dosage": "Used as subcutaneous injections several times per week at a clinician-directed dose.\nTypically reserved for substantial recovery demands, procedures, or multi-area issues.\nDosing, duration, and review intervals must be clearly defined by the supervising practitioner.",
+            "how_to_use": "Inject subcutaneously into appropriate sites as instructed.\nUse consistently across the entire advanced recovery block.\nCombine with structured rehabilitation, load management, supportive nutrition, and sleep strategies for best outcomes.",
+            "faqs": "How long until I see results?\nKLOW Blend is intended for the most demanding cases; progression is tracked over weeks to months, with focus on function, comfort, movement, and recovery quality.\n\nWhat are the common side effects?\nGenerally well tolerated when used appropriately. Mild injection-site irritation may occur. Any unusual or persistent symptoms should be reviewed promptly.\n\nHow do I store it?\nStore refrigerated at 2-8C after reconstitution. Do not freeze. Protect from direct sunlight and heat.\n\nCan I stack this with other healing supports?\nBecause KLOW Blend is already comprehensive, additional stacking is usually minimal and must be carefully justified.\n\nIs this suitable for beginners?\nKLOW is best reserved for advanced, clinician-managed cases with clear recovery needs, not as a first-line option for minor issues.",
+            "pairs_well": "Selective metabolic support (e.g. GLP-1 in appropriate clients) - when recomposition and recovery are combined.\nL-Carnitine, MOTS-c, NAD+ - to support energy, performance, and recovery in high-output individuals.",
+            "who_for": "Clients with complex, multi-area, or high-demand recovery needs.\nIndividuals in advanced protocols seeking a single, flagship recovery stack.",
+            "who_not_for": "Mild cases that can be managed with simpler single peptides or standard blends.\nAnyone wanting a maximal stack without genuine clinical need or structured follow-up.",
+            "storage": "Store refrigerated at 2-8C after reconstitution.\nDo not freeze.\nProtect from direct sunlight.",
+        },
     ]
 
     for p in healing_products:
@@ -490,7 +520,7 @@ async def seed_demo_data():
         (15, [("1 Bottle", 99.00), ("5 Bottles", 460.00), ("10 Bottles", 850.00)]),
         (16, [("1 Bottle", 119.00), ("5 Bottles", 550.00), ("10 Bottles", 1020.00)]),
         (17, [("1 Bottle", 129.00), ("5 Bottles", 600.00), ("10 Bottles", 1110.00)]),
-        # Healing & Recovery packages (products 18-24)
+        # Healing & Recovery packages (products 18-26)
         (18, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
         (19, [("1 Bottle", 120.00), ("5 Bottles", 560.00), ("10 Bottles", 1040.00)]),
         (20, [("1 Bottle", 135.00), ("5 Bottles", 630.00), ("10 Bottles", 1180.00)]),
@@ -498,6 +528,8 @@ async def seed_demo_data():
         (22, [("1 Bottle", 140.00), ("5 Bottles", 660.00), ("10 Bottles", 1240.00)]),
         (23, [("1 Bottle", 110.00), ("5 Bottles", 520.00), ("10 Bottles", 970.00)]),
         (24, [("1 Bottle", 199.00), ("5 Bottles", 930.00), ("10 Bottles", 1760.00)]),
+        (25, [("1 Bottle", 249.00), ("5 Bottles", 1160.00), ("10 Bottles", 2200.00)]),
+        (26, [("1 Bottle", 299.00), ("5 Bottles", 1390.00), ("10 Bottles", 2640.00)]),
     ]
 
     for prod_id, options in package_data:
