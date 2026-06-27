@@ -647,10 +647,21 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await db.execute("DELETE FROM cart_items WHERE telegram_id = ?", (telegram_id,))
     await db.commit()
 
-    items_desc = ", ".join(f"{i['name']} x{i['qty']}" for i in items_list)
     purpose = f"Order #{order_id}"
 
+    request_data = {
+        "amount": f"{total:.2f}",
+        "currency": "SGD",
+        "name": customer_name,
+        "phone": customer_phone,
+        "purpose": purpose,
+        "reference_number": str(order_id),
+        "redirect_url": "https://t.me/VantisAccessBot",
+    }
+
     webhook_url = f"{BASE_URL}/webhook/hitpay"
+    if "localhost" not in BASE_URL and "127.0.0.1" not in BASE_URL:
+        request_data["webhook"] = webhook_url
 
     try:
         async with httpx.AsyncClient(timeout=15) as client:
@@ -660,16 +671,7 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "X-BUSINESS-API-KEY": HITPAY_API_KEY,
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                data={
-                    "amount": f"{total:.2f}",
-                    "currency": "SGD",
-                    "name": customer_name,
-                    "phone": customer_phone,
-                    "purpose": purpose,
-                    "reference_number": str(order_id),
-                    "redirect_url": f"https://t.me/VantisAccessBot",
-                    "webhook": webhook_url,
-                },
+                data=request_data,
             )
             resp.raise_for_status()
             hitpay_data = resp.json()
@@ -686,15 +688,16 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         keyboard = [
             [InlineKeyboardButton("Pay Now", url=payment_url)],
+            [InlineKeyboardButton("I Have Paid", callback_data=f"check_payment_{order_id}")],
             [InlineKeyboardButton("Cancel Order", callback_data=f"cancel_order_{order_id}")],
         ]
         await query.edit_message_text(
             f"Order #{order_id}\n"
             "━━━━━━━━━━━━━━━━━━\n\n"
             f"Total: SGD {total:.2f}\n\n"
-            "Tap the button below to complete your payment.\n"
+            "Tap 'Pay Now' to complete your payment.\n"
             "You can pay via PayNow, credit/debit card, Apple Pay, Google Pay, and more.\n\n"
-            "Your order will be confirmed automatically once payment is received.",
+            "After paying, tap 'I Have Paid' and we'll verify your payment automatically.",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
@@ -730,6 +733,110 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(chat_id=int(ADMIN_CHAT_ID), text=admin_text)
         except Exception as e:
             logger.error(f"Failed to notify admin: {e}")
+
+
+async def check_payment_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    telegram_id = query.from_user.id
+    order_id = int(query.data.split("_")[2])
+
+    db = await get_db()
+    cursor = await db.execute(
+        "SELECT hitpay_payment_id, payment_status, total, hitpay_url FROM orders WHERE id = ? AND telegram_id = ?",
+        (order_id, telegram_id),
+    )
+    order = await cursor.fetchone()
+
+    if not order:
+        await query.edit_message_text("Order not found.")
+        await db.close()
+        return
+
+    if order[1] == "paid":
+        keyboard = [[InlineKeyboardButton("View Orders", callback_data="my_orders")]]
+        await query.edit_message_text(
+            f"Order #{order_id} - Already Confirmed!\n\nYour payment has been verified.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+        await db.close()
+        return
+
+    hitpay_id = order[0]
+    total = order[2]
+    payment_url = order[3]
+
+    if not hitpay_id:
+        await query.edit_message_text("Payment record not found. Please contact support.")
+        await db.close()
+        return
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.get(
+                f"{HITPAY_API_URL}/{hitpay_id}",
+                headers={"X-BUSINESS-API-KEY": HITPAY_API_KEY},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        status = data.get("status", "")
+
+        if status == "completed":
+            await db.execute(
+                "UPDATE orders SET payment_status = 'paid', order_status = 'processing' WHERE id = ?",
+                (order_id,),
+            )
+            await db.commit()
+
+            keyboard = [[InlineKeyboardButton("View Orders", callback_data="my_orders")]]
+            await query.edit_message_text(
+                f"Order #{order_id} - Payment Confirmed!\n"
+                "━━━━━━━━━━━━━━━━━━\n\n"
+                f"Your payment of SGD {total:.2f} has been received.\n"
+                "Your order is now being processed.\n\n"
+                "Thank you for your purchase!",
+                reply_markup=InlineKeyboardMarkup(keyboard),
+            )
+
+            if ADMIN_CHAT_ID:
+                try:
+                    await context.bot.send_message(
+                        chat_id=int(ADMIN_CHAT_ID),
+                        text=(
+                            f"PAYMENT RECEIVED - Order #{order_id}\n"
+                            "━━━━━━━━━━━━━━━━━━\n"
+                            f"Total: SGD {total:.2f}\n"
+                            f"HitPay ID: {hitpay_id}\n\n"
+                            "Payment verified automatically via HitPay."
+                        ),
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to notify admin: {e}")
+        else:
+            keyboard = [
+                [InlineKeyboardButton("Pay Now", url=payment_url)],
+                [InlineKeyboardButton("Check Again", callback_data=f"check_payment_{order_id}")],
+                [InlineKeyboardButton("Cancel Order", callback_data=f"cancel_order_{order_id}")],
+            ]
+            await query.edit_message_text(
+                f"Order #{order_id}\n"
+                "━━━━━━━━━━━━━━━━━━\n\n"
+                f"Total: SGD {total:.2f}\n\n"
+                "Payment not yet received. If you've already paid, please wait a moment and tap 'Check Again'.\n\n"
+                "If you haven't paid yet, tap 'Pay Now' to complete your payment.",
+                reply_markup=InlineKeyboardMarkup(keyboard),
+            )
+
+    except Exception as e:
+        logger.error(f"HitPay status check error: {e}")
+        keyboard = [[InlineKeyboardButton("Try Again", callback_data=f"check_payment_{order_id}")]]
+        await query.edit_message_text(
+            "Could not check payment status. Please try again in a moment.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+
+    await db.close()
 
 
 async def handle_cancel_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -993,6 +1100,7 @@ def build_app():
     app.add_handler(CallbackQueryHandler(show_cart, pattern="^cart$"))
     app.add_handler(CallbackQueryHandler(update_cart_item, pattern=r"^cart(inc|dec|del)_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_payment, pattern=r"^pay_"))
+    app.add_handler(CallbackQueryHandler(check_payment_status, pattern=r"^check_payment_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_cancel_order, pattern=r"^cancel_order_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_admin_order_action, pattern=r"^admin_(confirm|reject)_\d+$"))
     app.add_handler(CallbackQueryHandler(show_orders, pattern="^my_orders$"))
