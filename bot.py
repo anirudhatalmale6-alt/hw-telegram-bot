@@ -19,6 +19,8 @@ from config import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+IMAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "images")
+
 REG_NAME, REG_PHONE, REG_COUNTRY = range(3)
 CHECKOUT_NAME, CHECKOUT_PHONE, CHECKOUT_ADDRESS, CHECKOUT_DELIVERY = range(10, 14)
 ENQUIRY_MSG = 20
@@ -102,7 +104,7 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "What would you like to do?"
     )
     if update.callback_query:
-        await update.callback_query.edit_message_text(text, reply_markup=markup)
+        await safe_edit_text(update.callback_query, text, reply_markup=markup)
     else:
         await update.message.reply_text(text, reply_markup=markup)
 
@@ -123,7 +125,8 @@ async def browse_categories(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )])
     keyboard.append([InlineKeyboardButton("Back to Menu", callback_data="main_menu")])
 
-    await query.edit_message_text(
+    await safe_edit_text(
+        query,
         "Product Categories\n"
         "━━━━━━━━━━━━━━━━━━\n\n"
         "Select a category to browse:",
@@ -148,7 +151,7 @@ async def show_category_products(update: Update, context: ContextTypes.DEFAULT_T
 
     if not products:
         keyboard = [[InlineKeyboardButton("Back", callback_data="browse")]]
-        await query.edit_message_text("No products available in this category.", reply_markup=InlineKeyboardMarkup(keyboard))
+        await safe_edit_text(query, "No products available in this category.", reply_markup=InlineKeyboardMarkup(keyboard))
         return
 
     cat_name = products[0][3]
@@ -159,12 +162,47 @@ async def show_category_products(update: Update, context: ContextTypes.DEFAULT_T
         )])
     keyboard.append([InlineKeyboardButton("Back to Categories", callback_data="browse")])
 
-    await query.edit_message_text(
+    await safe_edit_text(
+        query,
         f"{cat_name}\n"
         "━━━━━━━━━━━━━━━━━━\n\n"
         "Select a product for details:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
+
+async def safe_edit_text(query, text, reply_markup=None):
+    try:
+        await query.edit_message_text(text, reply_markup=reply_markup)
+    except Exception:
+        try:
+            await query.message.delete()
+        except Exception:
+            pass
+        await query.get_bot().send_message(
+            chat_id=query.from_user.id, text=text, reply_markup=reply_markup
+        )
+
+
+def get_product_image_path(product_name):
+    if not os.path.isdir(IMAGES_DIR):
+        return None
+    safe_name = product_name.strip()
+    for ext in (".jpg", ".jpeg", ".png", ".webp"):
+        path = os.path.join(IMAGES_DIR, safe_name + ext)
+        if os.path.exists(path):
+            return path
+        path_lower = os.path.join(IMAGES_DIR, safe_name.lower().replace(" ", "_") + ext)
+        if os.path.exists(path_lower):
+            return path_lower
+        path_lower2 = os.path.join(IMAGES_DIR, safe_name.lower().replace(" ", "-") + ext)
+        if os.path.exists(path_lower2):
+            return path_lower2
+    for f in os.listdir(IMAGES_DIR):
+        fname = os.path.splitext(f)[0]
+        if fname.lower() == safe_name.lower():
+            return os.path.join(IMAGES_DIR, f)
+    return None
 
 
 async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -231,7 +269,22 @@ async def show_product_detail(update: Update, context: ContextTypes.DEFAULT_TYPE
     keyboard.append([InlineKeyboardButton("Back", callback_data=f"cat_{product[1]}")])
     keyboard.append([InlineKeyboardButton("Main Menu", callback_data="main_menu")])
 
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
+    markup = InlineKeyboardMarkup(keyboard)
+    image_path = get_product_image_path(product[2])
+
+    if image_path:
+        try:
+            await query.message.delete()
+        except Exception:
+            pass
+        caption = text[:1024] if len(text) > 1024 else text
+        with open(image_path, "rb") as f:
+            await query.get_bot().send_photo(
+                chat_id=query.from_user.id, photo=f,
+                caption=caption, reply_markup=markup
+            )
+    else:
+        await safe_edit_text(query, text, reply_markup=markup)
 
 
 async def show_product_full_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -272,9 +325,9 @@ async def show_product_full_info(update: Update, context: ContextTypes.DEFAULT_T
     markup = InlineKeyboardMarkup(keyboard)
 
     if len(full_text) <= 4096:
-        await query.edit_message_text(full_text, reply_markup=markup)
+        await safe_edit_text(query, full_text, reply_markup=markup)
     else:
-        await query.edit_message_text(full_text[:4096], reply_markup=None)
+        await safe_edit_text(query, full_text[:4096], reply_markup=None)
         remaining = full_text[4096:]
         chat_id = query.from_user.id
         while len(remaining) > 4096:
@@ -314,8 +367,8 @@ async def add_to_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("View Cart", callback_data="cart")],
         [InlineKeyboardButton("Continue Shopping", callback_data="browse")],
     ]
-    await query.edit_message_text(
-        "Item added to your cart!",
+    await safe_edit_text(
+        query, "Item added to your cart!",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
