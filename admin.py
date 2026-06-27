@@ -1,13 +1,19 @@
 import json
+import hmac
+import hashlib
 import asyncio
+import logging
 import aiosqlite
+import httpx
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-from config import ADMIN_USERNAME, ADMIN_PASSWORD, DATABASE_PATH, BOT_TOKEN
+from config import ADMIN_USERNAME, ADMIN_PASSWORD, DATABASE_PATH, BOT_TOKEN, ADMIN_CHAT_ID, HITPAY_SALT
 from database import init_db, seed_demo_data
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Health & Wellness Admin")
 app.add_middleware(SessionMiddleware, secret_key="hw-admin-secret-key-change-in-prod")
@@ -321,6 +327,111 @@ async def settings_page(request: Request):
     return templates.TemplateResponse("settings.html", {
         "request": request, "delivery_options": DELIVERY_OPTIONS
     })
+
+
+def verify_hitpay_hmac(payload: dict) -> bool:
+    received_hmac = payload.get("hmac", "")
+    fields = {k: v for k, v in payload.items() if k != "hmac"}
+    sorted_keys = sorted(fields.keys())
+    concat = "".join(f"{k}{fields[k]}" for k in sorted_keys)
+    computed = hmac.new(
+        HITPAY_SALT.encode(), concat.encode(), hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(computed, received_hmac)
+
+
+@app.post("/webhook/hitpay")
+async def hitpay_webhook(request: Request):
+    form_data = await request.form()
+    payload = dict(form_data)
+    logger.info(f"HitPay webhook received: {payload}")
+
+    if not verify_hitpay_hmac(payload):
+        logger.warning("HitPay webhook HMAC verification failed")
+        raise HTTPException(status_code=401, detail="Invalid signature")
+
+    status = payload.get("status", "")
+    reference = payload.get("reference_number", "")
+    payment_id = payload.get("payment_id", "")
+
+    if not reference:
+        return JSONResponse({"status": "ok"})
+
+    try:
+        order_id = int(reference)
+    except ValueError:
+        return JSONResponse({"status": "ok"})
+
+    db = await get_db()
+    cursor = await db.execute(
+        "SELECT telegram_id, total, full_name, items_json, payment_status FROM orders WHERE id = ?",
+        (order_id,),
+    )
+    order = await cursor.fetchone()
+
+    if not order:
+        await db.close()
+        return JSONResponse({"status": "ok"})
+
+    if status == "completed" and order["payment_status"] != "paid":
+        await db.execute(
+            "UPDATE orders SET payment_status = 'paid', order_status = 'processing', "
+            "hitpay_payment_id = ? WHERE id = ?",
+            (payment_id, order_id),
+        )
+        await db.commit()
+
+        telegram_id = order["telegram_id"]
+        total = order["total"]
+        customer_name = order["full_name"]
+        items = json.loads(order["items_json"]) if order["items_json"] else []
+        items_text = "\n".join(
+            f"  - {i['name']} x{i['qty']} @ SGD {i['price']:.2f}" for i in items
+        )
+
+        async with httpx.AsyncClient() as client:
+            customer_msg = (
+                f"Order #{order_id} - Payment Confirmed!\n"
+                "━━━━━━━━━━━━━━━━━━\n\n"
+                f"Your payment of SGD {total:.2f} has been received.\n"
+                "Your order is now being processed.\n\n"
+                "Thank you for your purchase!"
+            )
+            customer_keyboard = {
+                "inline_keyboard": [[{"text": "View Orders", "callback_data": "my_orders"}]]
+            }
+            try:
+                await client.post(
+                    f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                    json={
+                        "chat_id": telegram_id,
+                        "text": customer_msg,
+                        "reply_markup": customer_keyboard,
+                    },
+                )
+            except Exception as e:
+                logger.error(f"Failed to notify customer: {e}")
+
+            if ADMIN_CHAT_ID:
+                admin_msg = (
+                    f"PAYMENT RECEIVED - Order #{order_id}\n"
+                    "━━━━━━━━━━━━━━━━━━\n"
+                    f"Customer: {customer_name}\n"
+                    f"Items:\n{items_text}\n\n"
+                    f"Total: SGD {total:.2f}\n"
+                    f"Payment ID: {payment_id}\n\n"
+                    "Payment verified automatically via HitPay."
+                )
+                try:
+                    await client.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                        json={"chat_id": int(ADMIN_CHAT_ID), "text": admin_msg},
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to notify admin: {e}")
+
+    await db.close()
+    return JSONResponse({"status": "ok"})
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import logging
 import json
 import os
+import httpx
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
     ReplyKeyboardMarkup, KeyboardButton
@@ -11,10 +12,9 @@ from telegram.ext import (
 )
 from database import get_db
 from config import (
-    BOT_TOKEN, ADMIN_CHAT_ID, DELIVERY_OPTIONS, BASE_URL
+    BOT_TOKEN, ADMIN_CHAT_ID, DELIVERY_OPTIONS, BASE_URL,
+    HITPAY_API_KEY, HITPAY_API_URL,
 )
-
-PAYNOW_QR_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "paynow_qr.jpg")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -539,7 +539,7 @@ async def show_order_summary(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"Delivery: SGD {delivery_fee:.2f}\n"
         f"━━━━━━━━━━━━━━━━━━\n"
         f"Total: SGD {total:.2f}\n\n"
-        "Select payment method:"
+        "Tap below to proceed to payment:"
     )
 
     context.user_data["order_items"] = items_list
@@ -547,8 +547,7 @@ async def show_order_summary(update: Update, context: ContextTypes.DEFAULT_TYPE)
     context.user_data["order_total"] = total
 
     keyboard = [
-        [InlineKeyboardButton("PayNow (QR Code)", callback_data="pay_paynow")],
-        [InlineKeyboardButton("Credit/Debit Card (Stripe)", callback_data="pay_stripe")],
+        [InlineKeyboardButton("Proceed to Payment", callback_data="pay_hitpay")],
         [InlineKeyboardButton("Cancel Order", callback_data="main_menu")],
     ]
 
@@ -598,7 +597,7 @@ async def show_order_summary_from_query(query, context: ContextTypes.DEFAULT_TYP
         f"Delivery: SGD {delivery_fee:.2f}\n"
         f"━━━━━━━━━━━━━━━━━━\n"
         f"Total: SGD {total:.2f}\n\n"
-        "Select payment method:"
+        "Tap below to proceed to payment:"
     )
 
     context.user_data["order_items"] = items_list
@@ -606,8 +605,7 @@ async def show_order_summary_from_query(query, context: ContextTypes.DEFAULT_TYP
     context.user_data["order_total"] = total
 
     keyboard = [
-        [InlineKeyboardButton("PayNow (QR Code)", callback_data="pay_paynow")],
-        [InlineKeyboardButton("Credit/Debit Card (Stripe)", callback_data="pay_stripe")],
+        [InlineKeyboardButton("Proceed to Payment", callback_data="pay_hitpay")],
         [InlineKeyboardButton("Cancel Order", callback_data="main_menu")],
     ]
 
@@ -622,6 +620,8 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     total = context.user_data.get("order_total", 0)
     items_list = context.user_data.get("order_items", [])
+    customer_name = context.user_data.get("checkout_name", "")
+    customer_phone = context.user_data.get("checkout_phone", "")
 
     db = await get_db()
     cursor = await db.execute(
@@ -630,14 +630,14 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
             telegram_id,
-            context.user_data.get("checkout_name", ""),
-            context.user_data.get("checkout_phone", ""),
+            customer_name,
+            customer_phone,
             context.user_data.get("checkout_address", ""),
             context.user_data.get("delivery_method", ""),
             context.user_data.get("delivery_fee", 0),
             context.user_data.get("order_subtotal", 0),
             total,
-            payment_method,
+            "hitpay",
             "pending",
             "pending",
             json.dumps(items_list),
@@ -646,39 +646,65 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     order_id = cursor.lastrowid
     await db.execute("DELETE FROM cart_items WHERE telegram_id = ?", (telegram_id,))
     await db.commit()
-    await db.close()
 
-    if payment_method == "paynow":
-        await query.edit_message_text(
-            f"Order #{order_id} Created!\n"
-            "━━━━━━━━━━━━━━━━━━\n\n"
-            f"Total: SGD {total:.2f}\n\n"
-            "Please scan the PayNow QR code below to complete payment.\n"
-            "Once you have paid, tap the 'I Have Paid' button."
+    items_desc = ", ".join(f"{i['name']} x{i['qty']}" for i in items_list)
+    purpose = f"Order #{order_id}"
+
+    webhook_url = f"{BASE_URL}/webhook/hitpay"
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(
+                HITPAY_API_URL,
+                headers={
+                    "X-BUSINESS-API-KEY": HITPAY_API_KEY,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                data={
+                    "amount": f"{total:.2f}",
+                    "currency": "SGD",
+                    "name": customer_name,
+                    "phone": customer_phone,
+                    "purpose": purpose,
+                    "reference_number": str(order_id),
+                    "redirect_url": f"https://t.me/VantisAccessBot",
+                    "webhook": webhook_url,
+                },
+            )
+            resp.raise_for_status()
+            hitpay_data = resp.json()
+
+        payment_url = hitpay_data.get("url", "")
+        hitpay_id = hitpay_data.get("id", "")
+
+        await db.execute(
+            "UPDATE orders SET hitpay_payment_id = ?, hitpay_url = ? WHERE id = ?",
+            (hitpay_id, payment_url, order_id),
         )
+        await db.commit()
+        await db.close()
 
         keyboard = [
-            [InlineKeyboardButton("I Have Paid", callback_data=f"paid_{order_id}")],
+            [InlineKeyboardButton("Pay Now", url=payment_url)],
             [InlineKeyboardButton("Cancel Order", callback_data=f"cancel_order_{order_id}")],
         ]
-        await context.bot.send_photo(
-            chat_id=telegram_id,
-            photo=open(PAYNOW_QR_PATH, "rb"),
-            caption=f"PayNow QR Code\nOrder #{order_id} - SGD {total:.2f}\n\nScan this QR code with your banking app to pay.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-        )
-    else:
         await query.edit_message_text(
-            f"Order #{order_id} Created!\n"
+            f"Order #{order_id}\n"
             "━━━━━━━━━━━━━━━━━━\n\n"
             f"Total: SGD {total:.2f}\n\n"
-            "Stripe payment is coming soon.\n"
-            "Please use PayNow for now."
+            "Tap the button below to complete your payment.\n"
+            "You can pay via PayNow, credit/debit card, Apple Pay, Google Pay, and more.\n\n"
+            "Your order will be confirmed automatically once payment is received.",
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
+
+    except Exception as e:
+        logger.error(f"HitPay API error: {e}")
+        await db.close()
         keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
-        await context.bot.send_message(
-            chat_id=telegram_id,
-            text="To pay, please go back and select PayNow.",
+        await query.edit_message_text(
+            f"Order #{order_id} created but there was an issue generating the payment link.\n"
+            "Please contact support for assistance.",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
@@ -687,75 +713,23 @@ async def handle_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"  - {i['name']} x{i['qty']} @ SGD {i['price']:.2f}"
             for i in items_list
         )
+        delivery_method = context.user_data.get("delivery_method", "N/A")
+        delivery_label = DELIVERY_OPTIONS.get(delivery_method, {}).get("label", delivery_method)
         admin_text = (
             f"NEW ORDER #{order_id}\n"
             "━━━━━━━━━━━━━━━━━━\n"
-            f"Customer: {context.user_data.get('checkout_name', 'N/A')}\n"
-            f"Phone: {context.user_data.get('checkout_phone', 'N/A')}\n"
+            f"Customer: {customer_name}\n"
+            f"Phone: {customer_phone}\n"
             f"Address: {context.user_data.get('checkout_address', 'N/A')}\n"
-            f"Delivery: {context.user_data.get('delivery_method', 'N/A')}\n\n"
+            f"Delivery: {delivery_label}\n\n"
             f"Items:\n{items_text}\n\n"
             f"Total: SGD {total:.2f}\n"
-            f"Payment: {payment_method.upper()}\n"
-            f"Status: Awaiting payment"
+            f"Payment: HitPay (awaiting)"
         )
-        admin_keyboard = [
-            [InlineKeyboardButton("Confirm Payment", callback_data=f"admin_confirm_{order_id}"),
-             InlineKeyboardButton("Reject", callback_data=f"admin_reject_{order_id}")],
-        ]
         try:
-            await context.bot.send_message(
-                chat_id=int(ADMIN_CHAT_ID), text=admin_text,
-                reply_markup=InlineKeyboardMarkup(admin_keyboard),
-            )
+            await context.bot.send_message(chat_id=int(ADMIN_CHAT_ID), text=admin_text)
         except Exception as e:
             logger.error(f"Failed to notify admin: {e}")
-
-
-async def handle_paid_confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    telegram_id = query.from_user.id
-    order_id = int(query.data.split("_")[1])
-
-    db = await get_db()
-    await db.execute(
-        "UPDATE orders SET payment_status = 'submitted' WHERE id = ? AND telegram_id = ?",
-        (order_id, telegram_id),
-    )
-    await db.commit()
-    await db.close()
-
-    await query.edit_message_caption(
-        caption=(
-            f"Order #{order_id}\n"
-            "━━━━━━━━━━━━━━━━━━\n\n"
-            "Thank you! Your payment has been submitted.\n"
-            "We will verify and confirm your order shortly.\n\n"
-            "You can check your order status anytime from the menu."
-        ),
-    )
-
-    keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
-    await context.bot.send_message(
-        chat_id=telegram_id,
-        text="Payment submitted! We'll confirm your order once verified.",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-    )
-
-    if ADMIN_CHAT_ID:
-        admin_keyboard = [
-            [InlineKeyboardButton("Confirm Payment", callback_data=f"admin_confirm_{order_id}"),
-             InlineKeyboardButton("Reject", callback_data=f"admin_reject_{order_id}")],
-        ]
-        try:
-            await context.bot.send_message(
-                chat_id=int(ADMIN_CHAT_ID),
-                text=f"PAYMENT SUBMITTED for Order #{order_id}\nCustomer says they have paid. Please verify and confirm.",
-                reply_markup=InlineKeyboardMarkup(admin_keyboard),
-            )
-        except Exception as e:
-            logger.error(f"Failed to notify admin of payment: {e}")
 
 
 async def handle_cancel_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -773,14 +747,9 @@ async def handle_cancel_order(update: Update, context: ContextTypes.DEFAULT_TYPE
     await db.commit()
     await db.close()
 
-    await query.edit_message_caption(
-        caption=f"Order #{order_id} has been cancelled.",
-    )
-
     keyboard = [[InlineKeyboardButton("Back to Menu", callback_data="main_menu")]]
-    await context.bot.send_message(
-        chat_id=telegram_id,
-        text="Order cancelled. You can start a new order anytime.",
+    await query.edit_message_text(
+        f"Order #{order_id} has been cancelled.\nYou can start a new order anytime.",
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
@@ -805,7 +774,6 @@ async def handle_admin_order_action(update: Update, context: ContextTypes.DEFAUL
 
     customer_telegram_id = order[0]
     total = order[1]
-    customer_name = order[2]
 
     if action == "confirm":
         await db.execute(
@@ -1025,7 +993,6 @@ def build_app():
     app.add_handler(CallbackQueryHandler(show_cart, pattern="^cart$"))
     app.add_handler(CallbackQueryHandler(update_cart_item, pattern=r"^cart(inc|dec|del)_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_payment, pattern=r"^pay_"))
-    app.add_handler(CallbackQueryHandler(handle_paid_confirmation, pattern=r"^paid_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_cancel_order, pattern=r"^cancel_order_\d+$"))
     app.add_handler(CallbackQueryHandler(handle_admin_order_action, pattern=r"^admin_(confirm|reject)_\d+$"))
     app.add_handler(CallbackQueryHandler(show_orders, pattern="^my_orders$"))

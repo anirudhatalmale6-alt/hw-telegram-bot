@@ -71,6 +71,8 @@ async def init_db():
             payment_status TEXT DEFAULT 'pending',
             order_status TEXT DEFAULT 'pending',
             items_json TEXT,
+            hitpay_payment_id TEXT,
+            hitpay_url TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
         );
